@@ -11,4 +11,10 @@
 
     <artifactId>client-meeting-preparation-bot-app</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.symphonyoss.symphony</groupId>
+            <artifactId>symphony-client</artifactId>
+        </dependency>
+    </dependencies>
 </project>

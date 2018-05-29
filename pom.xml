@@ -12,7 +12,23 @@
         <module>call-report-ui</module>
         <module>client-meeting-preparation-bot-app</module>
     </modules>
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
+        <symphony-client.version>1.1.4</symphony-client.version>
+    </properties>
     <packaging>pom</packaging>
 
 
+    <dependencyManagement>
+        <dependencies>
+            <!-- https://mvnrepository.com/artifact/org.symphonyoss.symphony/symphony-client -->
+            <dependency>
+                <groupId>org.symphonyoss.symphony</groupId>
+                <artifactId>symphony-client</artifactId>
+                <version>${symphony-client.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
