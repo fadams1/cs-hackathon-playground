@@ -35,7 +35,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class HelloWorldBot {
-    private final static Logger log = LoggerFactory.getLogger(HelloWorldBot.class);
+//    private final static Logger log = LoggerFactory.getLogger(HelloWorldBot.class);
 
     private SymphonyClientConfig config = new SymphonyClientConfig(true);
     private SymphonyClient symClient;
