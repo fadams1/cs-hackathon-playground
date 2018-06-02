@@ -1,0 +1,5 @@
+{
+  "posmodelPath": "/Users/noopurjain/work/cs-hackathon-playground/client-meeting-preparation-bot-app/src/main/resources/en-pos-maxent.bin",
+  "sentenceSplitterModelPath": "/Users/noopurjain/work/cs-hackathon-playground/client-meeting-preparation-bot-app/src/main/resources/en-sent.bin",
+  "patternsFile": "/Users/noopurjain/work/cs-hackathon-playground/client-meeting-preparation-bot-app/src/main/resources/patterns.json"
+}
