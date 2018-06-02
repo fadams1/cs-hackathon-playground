@@ -72,10 +72,10 @@ public class HelloWorldBot implements ChatListener, ChatServiceListener{
         this.symClient.getChatService().addListener(this);
 
 //        // Add users to chat
-//        Set<SymUser> remoteUsers = new HashSet<>();
-//        remoteUsers.add(symClient.getUsersClient().getUserFromEmail(config.get(SymphonyClientConfigID.RECEIVER_EMAIL)));
-//        chat.setRemoteUsers(remoteUsers);
-//        chat.setStream(symClient.getStreamsClient().getStream(remoteUsers));
+        Set<SymUser> remoteUsers = new HashSet<>();
+        remoteUsers.add(symClient.getUsersClient().getUserFromEmail(config.get(SymphonyClientConfigID.RECEIVER_EMAIL)));
+        chat.setRemoteUsers(remoteUsers);
+        chat.setStream(symClient.getStreamsClient().getStream(remoteUsers));
 //
 //        // Send a message
 //        String message = "Hello " + config.get(SymphonyClientConfigID.RECEIVER_EMAIL) + "!";

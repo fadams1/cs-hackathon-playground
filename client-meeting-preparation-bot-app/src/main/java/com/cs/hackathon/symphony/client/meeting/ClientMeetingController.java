@@ -1,9 +1,13 @@
 package com.cs.hackathon.symphony.client.meeting;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 import java.util.function.Function;
 
 public class ClientMeetingController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientMeetingController.class);
     private final Function<ClientMeetingEvent, CallReportRequest> collectCallReportFromRm;
     private final ClientMeetingPreparationProcessor clientMeetingPreparationProcessor;
 
@@ -12,6 +16,10 @@ public class ClientMeetingController {
             .andThen(initiateClientPreparationCollection())
             .andThen(handleClientPreparationResponse());
         clientMeetingPreparationProcessor = new ClientMeetingPreparationProcessor();
+    }
+
+    public void notifyClientMeeting(ClientMeetingEvent clientMeetingEvent) {
+        collectCallReportFromRm.apply(clientMeetingEvent);
     }
 
     private Function<Map<String, TopicInformation>, CallReportRequest> handleClientPreparationResponse() {
@@ -23,7 +31,10 @@ public class ClientMeetingController {
     }
 
     private Function<ClientMeetingEvent, ClientMeetingEvent> clientMeetingEventReceived() {
-        throw new RuntimeException("not yet implemented!");
+        return clientMeetingEvent -> {
+            LOGGER.info("Received client meeting notification: {}", clientMeetingEvent);
+            return clientMeetingEvent;
+        };
     }
 
 }
