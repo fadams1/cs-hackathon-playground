@@ -4,7 +4,6 @@ import com.cs.hackathon.symphony.SymphonyClientBuilder;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.exceptions.AuthenticationException;
 import org.symphonyoss.client.exceptions.InitException;
 
@@ -17,10 +16,10 @@ public class ClientMeetingController {
     private final ClientMeetingPreparationProcessor clientMeetingPreparationProcessor;
 
     public ClientMeetingController(SymphonyClientBuilder symphonyClientBuilder) throws InitException, AuthenticationException {
+        clientMeetingPreparationProcessor = new ClientMeetingPreparationProcessor(symphonyClientBuilder);
         collectCallReportFromRm = clientMeetingEventReceived()
             .andThen(initiateClientPreparationCollection())
             .andThen(handleClientPreparationResponse());
-        clientMeetingPreparationProcessor = new ClientMeetingPreparationProcessor(symphonyClientBuilder);
     }
 
     public void notifyClientMeeting(ClientMeetingEvent clientMeetingEvent) {
