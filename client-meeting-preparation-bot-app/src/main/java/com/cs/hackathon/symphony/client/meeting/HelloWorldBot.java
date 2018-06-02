@@ -41,6 +41,7 @@ import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
 
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +51,7 @@ import static java.util.stream.Collectors.toList;
 public class HelloWorldBot implements ChatListener, ChatServiceListener{
     private final static Logger log = LoggerFactory.getLogger(HelloWorldBot.class);
 
-    private SymphonyClientConfig config = new SymphonyClientConfig(true);
+    private SymphonyClientConfig config;
     private SymphonyClient symClient;
     private Chat chat;
 
@@ -61,6 +62,8 @@ public class HelloWorldBot implements ChatListener, ChatServiceListener{
 
     public HelloWorldBot() throws SymException {
         // Get SJC instance
+        String configPath = Paths.get("src/main/resources/symphony.properties").toFile().getAbsolutePath();
+        config = new SymphonyClientConfig(configPath);
         this.symClient = Utils.getSymphonyClient(config);
 
         // Init chat
