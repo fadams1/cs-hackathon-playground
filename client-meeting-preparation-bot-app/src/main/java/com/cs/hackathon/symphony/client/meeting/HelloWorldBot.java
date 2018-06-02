@@ -22,6 +22,7 @@
 
 package com.cs.hackathon.symphony.client.meeting;
 
+import com.cs.hackathon.symphony.SymphonyClientBuilder;
 import nlp.NLPConfig;
 import nlp.NLPConfigLoader;
 import nlp.NLPService;
@@ -64,11 +65,10 @@ public class HelloWorldBot implements ChatListener, ChatServiceListener{
         // Get SJC instance
         String configPath = Paths.get("src/main/resources/symphony.properties").toFile().getAbsolutePath();
         config = new SymphonyClientConfig(configPath);
-        this.symClient = Utils.getSymphonyClient(config);
-
+        this.symClient = new SymphonyClientBuilder().getNewSymphonyClient();
         // Init chat
-//        this.chat = new Chat();
-//        chat.setLocalUser(symClient.getLocalUser());
+        this.chat = new Chat();
+        chat.setLocalUser(symClient.getLocalUser());
         this.symClient.getChatService().addListener(this);
 
 //        // Add users to chat

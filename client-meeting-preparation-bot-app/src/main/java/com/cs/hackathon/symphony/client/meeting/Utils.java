@@ -22,10 +22,6 @@
 package com.cs.hackathon.symphony.client.meeting;
 
 import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.client.SymphonyClientConfig;
-import org.symphonyoss.client.SymphonyClientFactory;
-import org.symphonyoss.client.exceptions.AuthenticationException;
-import org.symphonyoss.client.exceptions.InitException;
 import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.symphony.clients.model.SymMessage;
@@ -33,13 +29,6 @@ import org.symphonyoss.symphony.clients.model.SymMessage;
 import static java.lang.Thread.sleep;
 
 public class Utils {
-
-    public static SymphonyClient getSymphonyClient(SymphonyClientConfig symphonyClientConfig) throws InitException, AuthenticationException {
-        SymphonyClient symClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC);
-
-        symClient.init(symphonyClientConfig);
-        return symClient;
-    }
 
     public static void sendMessage(SymphonyClient client, Chat chat, String message)
             throws MessagesException {

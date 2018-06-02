@@ -1,17 +1,32 @@
 package com.cs.hackathon.symphony.client.meeting;
 
+import com.cs.hackathon.symphony.SymphonyClientBuilder;
+import com.cs.hackathon.symphony.ThrowingFunction;
+import com.cs.hackathon.symphony.client.meeting.topics.TopicHandlerMap;
+import com.cs.hackathon.symphony.client.meeting.topics.TopicInformation;
+import com.cs.hackathon.symphony.client.meeting.topics.TopicRequestContainer;
 import nlp.model.Action;
+import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfigID;
+import org.symphonyoss.client.exceptions.AuthenticationException;
+import org.symphonyoss.client.exceptions.InitException;
 import org.symphonyoss.client.model.Chat;
+import org.symphonyoss.symphony.clients.model.SymUser;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ClientMeetingPreparationProcessor {
     private final TopicHandlerMap topicHandlerMap = new TopicHandlerMap();
     private final Function<ClientMeetingEvent, Map<String, TopicInformation>> clientMeetingPreparer;
+    private final SymphonyClient symphonyClient;
 
-    public ClientMeetingPreparationProcessor() {
+    public ClientMeetingPreparationProcessor(SymphonyClientBuilder symphonyClientBuilder) throws InitException, AuthenticationException {
+        this.symphonyClient = symphonyClientBuilder.getNewSymphonyClient();
         this.clientMeetingPreparer = notifyRmOfAppointmentAndCollectTopicsToDiscuss()
                 .andThen(discussRequestedTopics())
                 .andThen(discussRemainingTopics());
@@ -37,8 +52,17 @@ public class ClientMeetingPreparationProcessor {
         return topicAction -> topicHandlerMap.getTopicHandler(topicAction.getAction()).collectTopicInformation(topicAction, rmChat);
     }
 
-    private Function<ClientMeetingEvent, TopicRequestContainer> notifyRmOfAppointmentAndCollectTopicsToDiscuss() {
-        throw new RuntimeException("not yet implemented!");
+    private ThrowingFunction<ClientMeetingEvent, TopicRequestContainer> notifyRmOfAppointmentAndCollectTopicsToDiscuss() {
+        return clientMeetingEvent -> {
+            Chat initialChat = new Chat();
+            initialChat.setLocalUser(symphonyClient.getLocalUser());
+
+            Set<SymUser> remoteUsers = new HashSet<>();
+            remoteUsers.add(symphonyClient.getUsersClient().getUserFromEmail(clientMeetingEvent.getRmEmail()));
+            initialChat.setRemoteUsers(remoteUsers);
+            initialChat.setStream(symphonyClient.getStreamsClient().getStream(remoteUsers));
+            return new TopicRequestContainer(Collections.emptySet(), symphonyClient, initialChat);
+        };
     }
 
 }

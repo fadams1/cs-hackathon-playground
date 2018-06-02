@@ -1,5 +1,6 @@
-package com.cs.hackathon.symphony.client.meeting;
+package com.cs.hackathon.symphony.client.meeting.topics;
 
+import com.cs.hackathon.symphony.client.meeting.topics.investment.InvestmentTopicHandler;
 import com.cs.hackathon.symphony.client.meeting.topics.legalid.LegalIdTopicHandler;
 
 import java.util.HashMap;
