@@ -5,7 +5,7 @@ import org.symphonyoss.client.model.Chat;
 public class KYCTopicHandler implements TopicHandler {
 
     @Override
-    public TopicInformation collectTopicInformation() {
+    public TopicInformation collectTopicInformation(Chat rmChat) {
 
         return null;
     }
