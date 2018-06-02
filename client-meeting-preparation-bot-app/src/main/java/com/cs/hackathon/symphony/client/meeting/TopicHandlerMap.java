@@ -1,19 +1,19 @@
 package com.cs.hackathon.symphony.client.meeting;
 
+import com.cs.hackathon.symphony.client.meeting.topics.legalid.LegalIdTopicHandler;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class TopicHandlerMap {
-    public static String KYC = "KYC";
     public static String INVESTMENT = "Investment";
-    public static String DOCUMENTS = "Documents";
+    public static String LEGAL_ID = "LegalId";
     private final Map<String, TopicHandler> topicHandlerMap;
 
     public TopicHandlerMap() {
         topicHandlerMap = new HashMap<>();
-        topicHandlerMap.put(KYC, new KYCTopicHandler());
+        topicHandlerMap.put(LEGAL_ID, new LegalIdTopicHandler());
         topicHandlerMap.put(INVESTMENT, new InvestmentTopicHandler());
-        topicHandlerMap.put(DOCUMENTS, new DocumentTopicHandler());
     }
 
     public TopicHandler getTopicHandler(String topic) {
