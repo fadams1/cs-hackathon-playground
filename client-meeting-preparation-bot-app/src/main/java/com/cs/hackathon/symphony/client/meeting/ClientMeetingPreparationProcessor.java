@@ -34,7 +34,7 @@ public class ClientMeetingPreparationProcessor {
     }
 
     private Function<Action, TopicInformation> callTopicHandler(Chat rmChat) {
-        return topicAction -> topicHandlerMap.getTopicHandler(topicAction.getAction()).collectTopicInformation(rmChat);
+        return topicAction -> topicHandlerMap.getTopicHandler(topicAction.getAction()).collectTopicInformation(topicAction, rmChat);
     }
 
     private Function<ClientMeetingEvent, TopicRequestContainer> notifyRmOfAppointmentAndCollectTopicsToDiscuss() {
