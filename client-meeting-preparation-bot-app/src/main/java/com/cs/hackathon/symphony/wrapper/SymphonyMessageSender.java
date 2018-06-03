@@ -31,4 +31,9 @@ public class SymphonyMessageSender implements MessageSender {
     public void removeListener(ChatListener chatListener) {
         chat.removeListener(chatListener);
     }
+
+    @Override
+    public void removeLastMessage() {
+        chat.setLastMessage(null);
+    }
 }

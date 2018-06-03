@@ -37,4 +37,8 @@ public class ConsoleMessageSender implements MessageSender {
         chatListenerList.remove(chatListener);
     }
 
+    @Override
+    public void removeLastMessage() {
+
+    }
 }

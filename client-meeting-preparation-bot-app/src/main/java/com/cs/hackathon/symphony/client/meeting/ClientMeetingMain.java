@@ -10,7 +10,7 @@ public class ClientMeetingMain {
 
     public static void main(String[] args) throws InitException, AuthenticationException {
         new ClientMeetingController(new SymphonyClientBuilder()).notifyClientMeeting(
-                new ClientMeetingEvent("noopur.n.jain@credit-suisse.com",
+                new ClientMeetingEvent("fay.adams@credit-suisse.com",
                         "fay", LocalDateTime.now().plusDays(1))
         );
     }

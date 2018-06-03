@@ -2,6 +2,7 @@ package com.cs.hackathon.symphony.client.meeting;
 
 import com.cs.hackathon.symphony.SymphonyClientBuilder;
 import com.cs.hackathon.symphony.ThrowingFunction;
+import com.cs.hackathon.symphony.client.meeting.init.RmConversationInitiator;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicHandlerMap;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicInformation;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicRequestContainer;
@@ -15,7 +16,6 @@ import org.symphonyoss.client.exceptions.InitException;
 import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -48,12 +48,12 @@ public class ClientMeetingPreparationProcessor {
 
     private Function<TopicRequestContainer, Map<String, TopicInformation>> discussRequestedTopics() {
         return topicsToDiscuss -> topicsToDiscuss.getRequestedAction()
-                .stream().map(callTopicHandler(topicsToDiscuss.getRmChat()))
+                .stream().map(callTopicHandler(topicsToDiscuss.getClientMeetingEvent(), topicsToDiscuss.getRmChat()))
                 .collect(Collectors.toMap(TopicInformation::getTopicName, ti -> ti));
     }
 
-    private Function<Action, TopicInformation> callTopicHandler(MessageSender rmChat) {
-        return topicAction -> topicHandlerMap.getTopicHandler(topicAction.getAction()).collectTopicInformation(topicAction, rmChat);
+    private ThrowingFunction<Action, TopicInformation> callTopicHandler(ClientMeetingEvent clientMeetingEvent, MessageSender rmChat) {
+        return topicAction -> topicHandlerMap.getTopicHandler(topicAction.getAction()).collectTopicInformation(clientMeetingEvent, topicAction, rmChat);
     }
 
     private ThrowingFunction<ClientMeetingEvent, TopicRequestContainer> notifyRmOfAppointmentAndCollectTopicsToDiscuss() {
@@ -65,7 +65,7 @@ public class ClientMeetingPreparationProcessor {
             ChatListener chatListener = new ChatListener() {
                 @Override
                 public void onChatMessage(SymMessage symMessage) {
-                    System.out.println("Thank you for your response. " + symMessage.getMessageText());
+                    LOGGER.info("Client replied with: {}", symMessage.getMessageText());
                     Action action = new Action();
                     action.setAction("LegalId");
                     collectedActions.add(action);
@@ -73,13 +73,13 @@ public class ClientMeetingPreparationProcessor {
                 }
             };
             initialChat.addListener(chatListener);
-            initialChat.sendMessage("Hello RM. You have a meeting with " + clientMeetingEvent.getClientId() + " at " + clientMeetingEvent.getClientMeetingTime(), false);
-            initialChat.sendMessage("Do you need any assistance?", true);
+            initialChat.sendMessage(RmConversationInitiator.HELLO_RM.apply(clientMeetingEvent), false);
+            initialChat.sendMessage(RmConversationInitiator.WHAT_DO_YOU_WANT_TO_DISCUSS_WITH_THE_CLIENT, false);
             LOGGER.info("Waiting for user response....");
             messageWaiter.await();
             initialChat.removeListener(chatListener);
 
-            return new TopicRequestContainer(collectedActions, symphonyClient, initialChat);
+            return new TopicRequestContainer(clientMeetingEvent, collectedActions, symphonyClient, initialChat);
         };
     }
 

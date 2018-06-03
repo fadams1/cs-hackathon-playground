@@ -9,4 +9,6 @@ public interface MessageSender {
     void addListener(ChatListener chatListener);
 
     void removeListener(ChatListener chatListener);
+
+    void removeLastMessage();
 }

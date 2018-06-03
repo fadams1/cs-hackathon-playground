@@ -1,6 +1,7 @@
 package com.cs.hackathon.symphony.client.meeting.topics;
 
 import com.cs.hackathon.symphony.client.meeting.topics.investment.InvestmentTopicHandler;
+import com.cs.hackathon.symphony.client.meeting.topics.legalid.LegalIdMap;
 import com.cs.hackathon.symphony.client.meeting.topics.legalid.LegalIdTopicHandler;
 
 import java.util.HashMap;
@@ -13,7 +14,7 @@ public class TopicHandlerMap {
 
     public TopicHandlerMap() {
         topicHandlerMap = new HashMap<>();
-        topicHandlerMap.put(LEGAL_ID, new LegalIdTopicHandler());
+        topicHandlerMap.put(LEGAL_ID, new LegalIdTopicHandler(new LegalIdMap()));
         topicHandlerMap.put(INVESTMENT, new InvestmentTopicHandler());
     }
 

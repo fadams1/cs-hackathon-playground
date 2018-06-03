@@ -41,12 +41,4 @@ public class SymphonyClientBuilder {
         return new SymphonyMessageSender(symphonyClient, initialChat);
     }
 
-    public void subscribeToEvents(MessageSender messageSender, ChatListener chatListener) {
-        messageSender.addListener(chatListener);
-    }
-
-    public void unsubscribeToEvents(MessageSender messageSender, ChatListener chatListener) {
-        messageSender.removeListener(chatListener);
-    }
-
 }
