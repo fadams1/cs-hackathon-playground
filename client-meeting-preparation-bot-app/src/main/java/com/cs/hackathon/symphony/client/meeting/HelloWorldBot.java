@@ -78,8 +78,9 @@ public class HelloWorldBot implements ChatListener, ChatServiceListener{
         chat.setStream(symClient.getStreamsClient().getStream(remoteUsers));
 //
 //        // Send a message
-//        String message = "Hello " + config.get(SymphonyClientConfigID.RECEIVER_EMAIL) + "!";
-//        Utils.sendMessage(symClient, chat, message);
+        String message = "Hello " + config.get(SymphonyClientConfigID.RECEIVER_EMAIL) + "!";
+        Utils.sendMessage(symClient, chat, message);
+        System.out.println("Sent message");
 
     }
 

@@ -37,6 +37,7 @@ public class SymphonyClientBuilder {
         remoteUsers.add(symphonyClient.getUsersClient().getUserFromEmail(rmEmail));
         initialChat.setRemoteUsers(remoteUsers);
         initialChat.setStream(symphonyClient.getStreamsClient().getStream(remoteUsers));
+        symphonyClient.getChatService().addChat(initialChat);
         return new SymphonyMessageSender(symphonyClient, initialChat);
     }
 
