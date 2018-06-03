@@ -19,7 +19,6 @@ public class SymphonyMessageSender implements MessageSender {
     public void sendMessage(String message, boolean waitForResponse) throws MessagesException {
         SymMessage messageSubmission = new SymMessage();
         messageSubmission.setMessageText(message);
-
         client.getMessageService().sendMessage(chat, messageSubmission);
     }
 
