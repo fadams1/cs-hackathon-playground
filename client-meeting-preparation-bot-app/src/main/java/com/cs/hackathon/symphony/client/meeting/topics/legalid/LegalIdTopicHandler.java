@@ -16,6 +16,7 @@ import org.symphonyoss.symphony.clients.model.SymMessage;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
@@ -34,12 +35,13 @@ public class LegalIdTopicHandler implements TopicHandler {
 
     @Override
     public TopicInformation collectTopicInformation(ClientMeetingEvent clientMeetingEvent, Action action, MessageSender rmChat) throws MessagesException {
-        List<LegalIdInformation> legalIdsToDiscuss = legalIdRepository.getLegalIdInformationFor(clientMeetingEvent.getClientId()).stream()
-                .map(checkLegalId(rmChat)).filter(Optional::isPresent).map(Optional::get)
-                .collect(Collectors.toList());
-        if (legalIdsToDiscuss.isEmpty()) {
+        Set<LegalIdInformation> legalIdInformationFor = legalIdRepository.getLegalIdInformationFor(clientMeetingEvent.getClientId());
+        if (legalIdInformationFor.isEmpty()) {
             rmChat.sendMessage(CLIENT_IDS_ARE_IN_ORDER, false);
         }
+        List<LegalIdInformation> legalIdsToDiscuss = legalIdInformationFor.stream()
+                .map(checkLegalId(rmChat)).filter(Optional::isPresent).map(Optional::get)
+                .collect(Collectors.toList());
         return new LegalIdTopicInformation(
                 legalIdsToDiscuss
         );
