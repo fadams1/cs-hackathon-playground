@@ -1,5 +1,6 @@
 package com.cs.hackathon.symphony.client.meeting;
 
+import com.cs.hackathon.symphony.ActionsFromMessageGetter;
 import com.cs.hackathon.symphony.SymphonyClientBuilder;
 import com.cs.hackathon.symphony.ThrowingFunction;
 import com.cs.hackathon.symphony.client.meeting.init.RmConversationInitiator;
@@ -14,9 +15,9 @@ import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.exceptions.AuthenticationException;
 import org.symphonyoss.client.exceptions.InitException;
 import org.symphonyoss.client.services.ChatListener;
-import org.symphonyoss.symphony.clients.model.SymMessage;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -29,6 +30,7 @@ public class ClientMeetingPreparationProcessor {
     private final Function<ClientMeetingEvent, Map<String, TopicInformation>> clientMeetingPreparer;
     private final SymphonyClient symphonyClient;
     private final SymphonyClientBuilder symphonyClientBuilder;
+    private final ActionsFromMessageGetter actionsFromMessageGetter = new ActionsFromMessageGetter();
 
     public ClientMeetingPreparationProcessor(SymphonyClientBuilder symphonyClientBuilder) throws InitException, AuthenticationException {
         this.symphonyClient = symphonyClientBuilder.getNewSymphonyClient();
@@ -62,16 +64,13 @@ public class ClientMeetingPreparationProcessor {
             CountDownLatch messageWaiter = new CountDownLatch(1);
 
             Set<Action> collectedActions = new HashSet<>();
-            ChatListener chatListener = new ChatListener() {
-                @Override
-                public void onChatMessage(SymMessage symMessage) {
-                    LOGGER.info("Client replied with: {}", symMessage.getMessageText());
-                    Action action = new Action();
-                    action.setAction("LegalId");
-                    collectedActions.add(action);
-                    messageWaiter.countDown();
-                }
+            ChatListener chatListener = symMessage -> {
+                System.out.println("Thank you for your response. " + symMessage.getMessageText());
+                List<Action> actions = actionsFromMessageGetter.getActions(symMessage.getMessageText());
+                collectedActions.addAll(actions);
+                messageWaiter.countDown();
             };
+
             initialChat.addListener(chatListener);
             initialChat.sendMessage(RmConversationInitiator.HELLO_RM.apply(clientMeetingEvent), false);
             initialChat.sendMessage(RmConversationInitiator.WHAT_DO_YOU_WANT_TO_DISCUSS_WITH_THE_CLIENT, false);

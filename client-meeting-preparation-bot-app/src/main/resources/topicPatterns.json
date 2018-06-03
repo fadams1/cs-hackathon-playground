@@ -1,0 +1,27 @@
+[
+  {"action":"Investment",
+    "posrequirementList":[
+      {"options":["investment", "investments"],"parameter":null,"pos":"NN"}
+    ]
+  },
+  {"action":"Documents",
+    "posrequirementList":[
+      {"options":["documents", "document"],"parameter":null,"pos":"NN"}]
+  },
+  {"action":"LegalId",
+    "posrequirementList":[
+      {"options":["legalid", "legalids"],"parameter":null,"pos":"JJ"}
+    ]
+  },
+  {
+    "action":"LegalId",
+    "posrequirementList":[
+      {"options":["legal"],"parameter":null,"pos":"JJ"},
+      {"options":["id", "ids"],"parameter":null,"pos":"NN"}
+    ]
+  },
+  {"action":"KYC",
+    "posrequirementList":[
+      {"options":["kyc","KYC", "Kyc"],"parameter":null,"pos":"NN"}]
+  }
+]

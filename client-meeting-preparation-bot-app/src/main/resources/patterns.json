@@ -7,6 +7,15 @@
       {"options":null,"parameter":null,"pos":"IN"},
       {"options":null,"parameter":"product","pos":"NN"}]
   },
+  {"action":"CollectTopics",
+    "posrequirementList":[
+      {"options":["talk","discuss"],"parameter":null,"pos":"V"},
+      {"options":null,"parameter":null,"pos":"*"}]
+  },
+  {"action":"Investment",
+    "posrequirementList":[
+      {"options":["Investment","investment"],"parameter":null,"pos":"NN"}]
+  },
   {"action":"buyShares",
     "posrequirementList":[
       {"options":["buy","purchase"],"parameter":null,"pos":"V"},

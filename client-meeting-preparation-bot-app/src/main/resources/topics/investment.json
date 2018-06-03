@@ -1,0 +1,11 @@
+[
+  {"action":"CollectTopics",
+    "posrequirementList":[
+      {"options":["talk","discuss"],"parameter":null,"pos":"V"},
+      {"options":null,"parameter":null,"pos":"*"}]
+  },
+  {"action":"Investment",
+    "posrequirementList":[
+      {"options":["Investment","investment"],"parameter":"investment","pos":"NN"}]
+  }
+]
