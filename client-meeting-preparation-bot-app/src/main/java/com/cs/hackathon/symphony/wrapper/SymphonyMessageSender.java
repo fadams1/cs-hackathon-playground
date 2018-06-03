@@ -16,6 +16,11 @@ public class SymphonyMessageSender implements MessageSender {
     }
 
     @Override
+    public void sendMessage(SymMessage message) throws MessagesException {
+        client.getMessageService().sendMessage(chat, message);
+    }
+
+    @Override
     public void sendMessage(String message, boolean waitForResponse) throws MessagesException {
         SymMessage messageSubmission = new SymMessage();
         messageSubmission.setMessageText(message);

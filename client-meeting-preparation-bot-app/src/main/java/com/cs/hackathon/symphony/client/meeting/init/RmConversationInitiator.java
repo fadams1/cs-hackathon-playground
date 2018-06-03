@@ -20,12 +20,10 @@ public class RmConversationInitiator {
 
     // LEGAL ID
     public static final Function<LegalIdInformation, String> LEGAL_ID_EXPIRED = legalIdInformation ->
-            "The clients " + legalIdInformation.getLegalIdType() + " expired on " + legalIdInformation.getExpiry().format(DATE_TIME_FORMATTER) + ". " +
-                    "To view the copy of the legal id click here: " + legalIdInformation.getDocumentImageUrl();
+            "The clients " + legalIdInformation.getLegalIdType() + " expired on " + legalIdInformation.getExpiry().format(DATE_TIME_FORMATTER);
 
     public static final Function<LegalIdInformation, String> LEGAL_ID_NEARING_EXPIRY = legalIdInformation ->
             "The clients " + legalIdInformation.getLegalIdType() + " will expire on " + legalIdInformation.getExpiry().format(DATE_TIME_FORMATTER) + ". " +
-                    "To view the copy of the legal id click here: " + legalIdInformation.getDocumentImageUrl() + ". " +
                     "Would you like to add the clients " + legalIdInformation.getLegalIdType() + " to the client meeting preparation pack?";
 
 

@@ -71,6 +71,7 @@ public class LegalIdTopicHandler implements TopicHandler {
         rmChat.removeLastMessage();
         rmChat.addListener(chatListener);
         rmChat.sendMessage(messageProducer.apply(legalIdInformation), false);
+        rmChat.sendMessage(legalIdRepository.generateLegalIdCard(legalIdInformation));
         rmChat.sendMessage(RmConversationInitiator.CONFIRMATION, true);
         waitForResponse.await();
         rmChat.removeListener(chatListener);
@@ -89,6 +90,4 @@ public class LegalIdTopicHandler implements TopicHandler {
     private Predicate<LegalIdInformation> isNearingExpiry() {
         return legalIdInformation -> LocalDateTime.now().plusMonths(3).isAfter(legalIdInformation.getExpiry());
     }
-
-
 }
