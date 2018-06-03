@@ -1,5 +1,6 @@
 package com.cs.hackathon.symphony.client.meeting;
 
+import com.cs.hackathon.symphony.ActionsFromMessageGetter;
 import com.cs.hackathon.symphony.SymphonyClientBuilder;
 import com.cs.hackathon.symphony.ThrowingFunction;
 import com.cs.hackathon.symphony.client.meeting.init.RmConversationInitiator;
@@ -14,9 +15,9 @@ import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.exceptions.AuthenticationException;
 import org.symphonyoss.client.exceptions.InitException;
 import org.symphonyoss.client.services.ChatListener;
-import org.symphonyoss.symphony.clients.model.SymMessage;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -29,27 +30,42 @@ public class ClientMeetingPreparationProcessor {
     private final Function<ClientMeetingEvent, Map<String, TopicInformation>> clientMeetingPreparer;
     private final SymphonyClient symphonyClient;
     private final SymphonyClientBuilder symphonyClientBuilder;
+    private final ActionsFromMessageGetter actionsFromMessageGetter = new ActionsFromMessageGetter();
 
     public ClientMeetingPreparationProcessor(SymphonyClientBuilder symphonyClientBuilder) throws InitException, AuthenticationException {
         this.symphonyClient = symphonyClientBuilder.getNewSymphonyClient();
         this.symphonyClientBuilder = symphonyClientBuilder;
         this.clientMeetingPreparer = notifyRmOfAppointmentAndCollectTopicsToDiscuss()
                 .andThen(discussRequestedTopics())
-                .andThen(discussRemainingTopics());
+                .andThen(discussRemainingTopics())
+                .andThen(terminateChatWithRm());
+    }
+
+    private ThrowingFunction<TopicRequestContainer, Map<String, TopicInformation>> terminateChatWithRm() {
+        return topicRequestContainer -> {
+            MessageSender chat = topicRequestContainer.getRmChat();
+            chat.sendMessage("Thank you, your meeting pack will be emailed to you shortly.", false);
+            chat.sendMessage("Good bye and all the best.", false);
+            return topicRequestContainer.getTopicInformationMap();
+        };
     }
 
     public Map<String, TopicInformation> collectTopicInformation(ClientMeetingEvent clientMeetingEvent) {
         return clientMeetingPreparer.apply(clientMeetingEvent);
     }
 
-    private Function<Map<String, TopicInformation>, Map<String, TopicInformation>> discussRemainingTopics() {
-        return collectedTopicInformaton -> collectedTopicInformaton;
+    private Function<TopicRequestContainer, TopicRequestContainer> discussRemainingTopics() {
+        return collectedTopicInformation -> collectedTopicInformation;
     }
 
-    private Function<TopicRequestContainer, Map<String, TopicInformation>> discussRequestedTopics() {
-        return topicsToDiscuss -> topicsToDiscuss.getRequestedAction()
+    private Function<TopicRequestContainer, TopicRequestContainer> discussRequestedTopics() {
+        return topicsToDiscuss -> {
+            Map<String, TopicInformation> topicsMap = topicsToDiscuss.getRequestedAction()
                 .stream().map(callTopicHandler(topicsToDiscuss.getClientMeetingEvent(), topicsToDiscuss.getRmChat()))
                 .collect(Collectors.toMap(TopicInformation::getTopicName, ti -> ti));
+            topicsToDiscuss.putAll(topicsMap);
+            return topicsToDiscuss;
+        };
     }
 
     private ThrowingFunction<Action, TopicInformation> callTopicHandler(ClientMeetingEvent clientMeetingEvent, MessageSender rmChat) {
@@ -62,16 +78,13 @@ public class ClientMeetingPreparationProcessor {
             CountDownLatch messageWaiter = new CountDownLatch(1);
 
             Set<Action> collectedActions = new HashSet<>();
-            ChatListener chatListener = new ChatListener() {
-                @Override
-                public void onChatMessage(SymMessage symMessage) {
-                    LOGGER.info("Client replied with: {}", symMessage.getMessageText());
-                    Action action = new Action();
-                    action.setAction("LegalId");
-                    collectedActions.add(action);
-                    messageWaiter.countDown();
-                }
+            ChatListener chatListener = symMessage -> {
+                System.out.println("Thank you for your response. " + symMessage.getMessageText());
+                List<Action> actions = actionsFromMessageGetter.getActions(symMessage.getMessageText());
+                collectedActions.addAll(actions);
+                messageWaiter.countDown();
             };
+
             initialChat.addListener(chatListener);
             initialChat.sendMessage(RmConversationInitiator.HELLO_RM.apply(clientMeetingEvent), false);
             initialChat.sendMessage(RmConversationInitiator.WHAT_DO_YOU_WANT_TO_DISCUSS_WITH_THE_CLIENT, false);

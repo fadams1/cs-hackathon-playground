@@ -27,5 +27,5 @@ public class RmConversationInitiator {
                     "Would you like to add the clients " + legalIdInformation.getLegalIdType() + " to the client meeting preparation pack?";
 
 
-    public static final String CLIENT_IDS_ARE_IN_ORDER = "All of the clients legal ids are valid for at least the next 6 months";
+    public static final String CLIENT_IDS_ARE_IN_ORDER = "All of the clients legal ids are valid for at least the next 3 months";
 }
