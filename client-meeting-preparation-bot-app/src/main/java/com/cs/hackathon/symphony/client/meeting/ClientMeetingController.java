@@ -27,7 +27,7 @@ public class ClientMeetingController {
     }
 
     private Function<Map<String, TopicInformation>, CallReportRequest> handleClientPreparationResponse() {
-        return something -> new CallReportRequest();
+        return CallReportRequest::new;
     }
 
     private Function<ClientMeetingEvent, Map<String, TopicInformation>> initiateClientPreparationCollection() {

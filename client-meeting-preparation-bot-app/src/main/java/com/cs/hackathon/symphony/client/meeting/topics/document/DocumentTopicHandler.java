@@ -12,7 +12,17 @@ public class DocumentTopicHandler implements TopicHandler {
 
     @Override
     public TopicInformation collectTopicInformation(ClientMeetingEvent clientMeetingEvent, Action action, MessageSender rmChat) throws MessagesException {
-        return null;
+        return new TopicInformation() {
+            @Override
+            public String getTopicName() {
+                return "Documents";
+            }
+
+            @Override
+            public String collect() {
+                return "Document1, Document2, Document3";
+            }
+        };
     }
 
     @Override

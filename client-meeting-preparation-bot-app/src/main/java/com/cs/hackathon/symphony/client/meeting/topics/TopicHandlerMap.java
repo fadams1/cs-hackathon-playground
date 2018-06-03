@@ -11,7 +11,7 @@ import java.util.Map;
 public class TopicHandlerMap {
     public static String INVESTMENT = "Investment";
     public static String LEGAL_ID = "LegalId";
-    public static String DOCUMENT = "Document";
+    public static String DOCUMENT = "Documents";
     private final Map<String, TopicHandler> topicHandlerMap;
 
     public TopicHandlerMap() {

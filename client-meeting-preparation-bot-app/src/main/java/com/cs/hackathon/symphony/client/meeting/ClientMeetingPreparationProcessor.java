@@ -37,21 +37,35 @@ public class ClientMeetingPreparationProcessor {
         this.symphonyClientBuilder = symphonyClientBuilder;
         this.clientMeetingPreparer = notifyRmOfAppointmentAndCollectTopicsToDiscuss()
                 .andThen(discussRequestedTopics())
-                .andThen(discussRemainingTopics());
+                .andThen(discussRemainingTopics())
+                .andThen(terminateChatWithRm());
+    }
+
+    private ThrowingFunction<TopicRequestContainer, Map<String, TopicInformation>> terminateChatWithRm() {
+        return topicRequestContainer -> {
+            MessageSender chat = topicRequestContainer.getRmChat();
+            chat.sendMessage("Thank you, your meeting pack will be emailed to you shortly.", false);
+            chat.sendMessage("Good bye and all the best.", false);
+            return topicRequestContainer.getTopicInformationMap();
+        };
     }
 
     public Map<String, TopicInformation> collectTopicInformation(ClientMeetingEvent clientMeetingEvent) {
         return clientMeetingPreparer.apply(clientMeetingEvent);
     }
 
-    private Function<Map<String, TopicInformation>, Map<String, TopicInformation>> discussRemainingTopics() {
-        return collectedTopicInformaton -> collectedTopicInformaton;
+    private Function<TopicRequestContainer, TopicRequestContainer> discussRemainingTopics() {
+        return collectedTopicInformation -> collectedTopicInformation;
     }
 
-    private Function<TopicRequestContainer, Map<String, TopicInformation>> discussRequestedTopics() {
-        return topicsToDiscuss -> topicsToDiscuss.getRequestedAction()
+    private Function<TopicRequestContainer, TopicRequestContainer> discussRequestedTopics() {
+        return topicsToDiscuss -> {
+            Map<String, TopicInformation> topicsMap = topicsToDiscuss.getRequestedAction()
                 .stream().map(callTopicHandler(topicsToDiscuss.getClientMeetingEvent(), topicsToDiscuss.getRmChat()))
                 .collect(Collectors.toMap(TopicInformation::getTopicName, ti -> ti));
+            topicsToDiscuss.putAll(topicsMap);
+            return topicsToDiscuss;
+        };
     }
 
     private ThrowingFunction<Action, TopicInformation> callTopicHandler(ClientMeetingEvent clientMeetingEvent, MessageSender rmChat) {
