@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0kmhmg5" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.15.1">
+  <bpmn:collaboration id="Collaboration_0a14a2n">
+    <bpmn:participant id="cs-hf-client-meeting-process" name="Client Meeting Process" processRef="client-meeting-process" />
+  </bpmn:collaboration>
+  <bpmn:process id="client-meeting-process" name="Client Meeting Process" isExecutable="true" camunda:versionTag="1.0">
+    <bpmn:laneSet id="LaneSet_1xsbuun">
+      <bpmn:lane id="Lane_1e2gq67" name="RM">
+        <bpmn:flowNodeRef>client-meeting-process-end</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task-fill-call-report</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task-meet-client</bpmn:flowNodeRef>
+        <bpmn:childLaneSet id="LaneSet_021zdtv" />
+      </bpmn:lane>
+      <bpmn:lane id="Lane_0hklkp9" name="SYMPHONY BOT">
+        <bpmn:flowNodeRef>client-meeting-process-start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task-initiate-call-report</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task-initiate-rm-conversation</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task-document-check</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task-email-client-pack</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task-save-pending-call-report</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>IntermediateThrowEvent_169uf4o</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task-delegate-topics</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="client-meeting-process-start" name="Meeting Event Received">
+      <bpmn:outgoing>SequenceFlow_1rz6y6o</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1rz6y6o" sourceRef="client-meeting-process-start" targetRef="task-initiate-rm-conversation" />
+    <bpmn:sequenceFlow id="SequenceFlow_0h5xn4p" sourceRef="task-initiate-call-report" targetRef="task-fill-call-report" />
+    <bpmn:sequenceFlow id="SequenceFlow_12m64wr" sourceRef="task-fill-call-report" targetRef="client-meeting-process-end" />
+    <bpmn:endEvent id="client-meeting-process-end" name="End">
+      <bpmn:incoming>SequenceFlow_12m64wr</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0w3v1yx" sourceRef="task-save-pending-call-report" targetRef="task-meet-client" />
+    <bpmn:sequenceFlow id="SequenceFlow_0gkcjzm" sourceRef="task-email-client-pack" targetRef="task-save-pending-call-report" />
+    <bpmn:task id="task-fill-call-report" name="FILL UP CALL REPORT">
+      <bpmn:incoming>SequenceFlow_0h5xn4p</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_12m64wr</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task-initiate-call-report" name="INITIATE CALL REPORT PROCESS">
+      <bpmn:incoming>SequenceFlow_1qmk5qq</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0h5xn4p</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="SequenceFlow_0hd57lv" sourceRef="task-meet-client" targetRef="IntermediateThrowEvent_169uf4o" />
+    <bpmn:sequenceFlow id="SequenceFlow_1qmk5qq" sourceRef="IntermediateThrowEvent_169uf4o" targetRef="task-initiate-call-report" />
+    <bpmn:sequenceFlow id="SequenceFlow_1rit9ks" sourceRef="task-delegate-topics" targetRef="task-document-check" />
+    <bpmn:sequenceFlow id="SequenceFlow_09fwz96" sourceRef="task-document-check" targetRef="task-email-client-pack" />
+    <bpmn:serviceTask id="task-initiate-rm-conversation" name="INITIATE RM Conversation" camunda:type="external" camunda:topic="topic-initiate-rm-conversation">
+      <bpmn:incoming>SequenceFlow_1rz6y6o</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0dekhi1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0dekhi1" sourceRef="task-initiate-rm-conversation" targetRef="task-delegate-topics" />
+    <bpmn:task id="task-document-check" name="DOCUMENT CHECK">
+      <bpmn:incoming>SequenceFlow_1rit9ks</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_09fwz96</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task-email-client-pack" name="EMAIL CLIENT MEETING PACK">
+      <bpmn:incoming>SequenceFlow_09fwz96</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0gkcjzm</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task-save-pending-call-report" name="SAVE CALL REPORT WITH PENDING STATUS">
+      <bpmn:incoming>SequenceFlow_0gkcjzm</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0w3v1yx</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="task-meet-client" name="MEET CLIENT">
+      <bpmn:incoming>SequenceFlow_0w3v1yx</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0hd57lv</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_169uf4o" name="2 business days">
+      <bpmn:incoming>SequenceFlow_0hd57lv</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1qmk5qq</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P2D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:userTask id="task-delegate-topics" name="GATHER TOPICS">
+      <bpmn:incoming>SequenceFlow_0dekhi1</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1rit9ks</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:association id="Association_0e0oo4r" sourceRef="task-delegate-topics" targetRef="TextAnnotation_14zpdow" />
+    <bpmn:textAnnotation id="TextAnnotation_14zpdow">
+      <bpmn:text>Using NLP, next action can be identified via the bot and RM conversation</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_10lgtkn" sourceRef="IntermediateThrowEvent_169uf4o" targetRef="TextAnnotation_09ikeuf" />
+    <bpmn:textAnnotation id="TextAnnotation_09ikeuf">
+      <bpmn:text>remind RM to fill up call report if not done 2 business days has passed since the meetup</bpmn:text>
+    </bpmn:textAnnotation>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0a14a2n">
+      <bpmndi:BPMNShape id="StartEvent_1wg2md8_di" bpmnElement="client-meeting-process-start">
+        <dc:Bounds x="323" y="300" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="307" y="343" width="71" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1dtzoae_di" bpmnElement="client-meeting-process-end">
+        <dc:Bounds x="1650" y="91" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1658" y="134" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_07hxufn_di" bpmnElement="task-initiate-rm-conversation">
+        <dc:Bounds x="465" y="278" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_16e1bqf_di" bpmnElement="cs-hf-client-meeting-process">
+        <dc:Bounds x="224" y="14" width="1493" height="376" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1e2gq67_di" bpmnElement="Lane_1e2gq67">
+        <dc:Bounds x="254" y="14" width="1463" height="202" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0hklkp9_di" bpmnElement="Lane_0hklkp9">
+        <dc:Bounds x="254" y="216" width="1463" height="174" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rz6y6o_di" bpmnElement="SequenceFlow_1rz6y6o">
+        <di:waypoint x="359" y="318" />
+        <di:waypoint x="465" y="318" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_007amcn_di" bpmnElement="task-document-check">
+        <dc:Bounds x="802" y="278" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0ix97fy_di" bpmnElement="task-email-client-pack">
+        <dc:Bounds x="971" y="278" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1b0zva5_di" bpmnElement="task-meet-client">
+        <dc:Bounds x="1152" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1c6llnf_di" bpmnElement="task-initiate-call-report">
+        <dc:Bounds x="1483" y="278" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1ksls7q_di" bpmnElement="task-fill-call-report">
+        <dc:Bounds x="1483" y="69" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0h5xn4p_di" bpmnElement="SequenceFlow_0h5xn4p">
+        <di:waypoint x="1533" y="278" />
+        <di:waypoint x="1533" y="149" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_12m64wr_di" bpmnElement="SequenceFlow_12m64wr">
+        <di:waypoint x="1583" y="109" />
+        <di:waypoint x="1650" y="109" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_06q0yfm_di" bpmnElement="task-save-pending-call-report">
+        <dc:Bounds x="1152" y="278" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0w3v1yx_di" bpmnElement="SequenceFlow_0w3v1yx">
+        <di:waypoint x="1202" y="278" />
+        <di:waypoint x="1202" y="161" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0gkcjzm_di" bpmnElement="SequenceFlow_0gkcjzm">
+        <di:waypoint x="1071" y="318" />
+        <di:waypoint x="1152" y="318" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0hd57lv_di" bpmnElement="SequenceFlow_0hd57lv">
+        <di:waypoint x="1252" y="121" />
+        <di:waypoint x="1347" y="121" />
+        <di:waypoint x="1347" y="213" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1qmk5qq_di" bpmnElement="SequenceFlow_1qmk5qq">
+        <di:waypoint x="1347" y="249" />
+        <di:waypoint x="1347" y="318" />
+        <di:waypoint x="1483" y="318" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1k7ej6w_di" bpmnElement="IntermediateThrowEvent_169uf4o">
+        <dc:Bounds x="1329" y="213" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1239.5" y="224" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rit9ks_di" bpmnElement="SequenceFlow_1rit9ks">
+        <di:waypoint x="733" y="318" />
+        <di:waypoint x="802" y="318" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_09fwz96_di" bpmnElement="SequenceFlow_09fwz96">
+        <di:waypoint x="902" y="318" />
+        <di:waypoint x="971" y="318" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0dekhi1_di" bpmnElement="SequenceFlow_0dekhi1">
+        <di:waypoint x="565" y="318" />
+        <di:waypoint x="633" y="318" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_14zpdow_di" bpmnElement="TextAnnotation_14zpdow">
+        <dc:Bounds x="676" y="108" width="100" height="84" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0e0oo4r_di" bpmnElement="Association_0e0oo4r">
+        <di:waypoint x="693" y="278" />
+        <di:waypoint x="715" y="192" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_09ikeuf_di" bpmnElement="TextAnnotation_09ikeuf">
+        <dc:Bounds x="1362" y="53" width="100" height="112" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_10lgtkn_di" bpmnElement="Association_10lgtkn">
+        <di:waypoint x="1355" y="215" />
+        <di:waypoint x="1382" y="165" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1j39n32_di" bpmnElement="task-delegate-topics">
+        <dc:Bounds x="633" y="278" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
