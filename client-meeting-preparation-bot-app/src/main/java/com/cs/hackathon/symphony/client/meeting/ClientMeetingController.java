@@ -1,5 +1,6 @@
 package com.cs.hackathon.symphony.client.meeting;
 
+import camunda.model.ProcessInstance;
 import com.cs.hackathon.symphony.SymphonyClientBuilder;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicInformation;
 import org.slf4j.Logger;
@@ -15,8 +16,8 @@ public class ClientMeetingController {
     private final Function<ClientMeetingEvent, CallReportRequest> collectCallReportFromRm;
     private final ClientMeetingPreparationProcessor clientMeetingPreparationProcessor;
 
-    public ClientMeetingController(SymphonyClientBuilder symphonyClientBuilder) throws InitException, AuthenticationException {
-        clientMeetingPreparationProcessor = new ClientMeetingPreparationProcessor(symphonyClientBuilder);
+    public ClientMeetingController(SymphonyClientBuilder symphonyClientBuilder, ProcessInstance processInstance) throws InitException, AuthenticationException {
+        clientMeetingPreparationProcessor = new ClientMeetingPreparationProcessor(symphonyClientBuilder, processInstance);
         collectCallReportFromRm = clientMeetingEventReceived()
             .andThen(initiateClientPreparationCollection())
             .andThen(handleClientPreparationResponse());

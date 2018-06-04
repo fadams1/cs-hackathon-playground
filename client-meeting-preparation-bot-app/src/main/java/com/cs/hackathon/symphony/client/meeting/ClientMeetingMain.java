@@ -1,6 +1,8 @@
 package com.cs.hackathon.symphony.client.meeting;
 
+import camunda.model.ProcessInstance;
 import com.cs.hackathon.symphony.ExternalTaskClientBuilder;
+import com.cs.hackathon.symphony.ProcessInstanceClientBuilder;
 import com.cs.hackathon.symphony.SymphonyClientBuilder;
 import com.cs.hackathon.symphony.ThrowingFunction;
 import org.camunda.bpm.client.ExternalTaskClient;
@@ -14,8 +16,9 @@ import java.time.LocalDateTime;
 
 public class ClientMeetingMain {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientMeetingController.class);
-    private static final boolean WFENGINE_CONNECTED = false;
+    private static final boolean WFENGINE_CONNECTED = true;
     private static final String TOPIC_INITIATE_RM_CONVERSATION = "topic-initiate-rm-conversation";
+    public static final String DEFAULT_BUSINESS_KEY = "cs-hf-new-client-meeting-process";
 
     public static void main(String[] args) throws InitException, AuthenticationException {
         if (WFENGINE_CONNECTED) {
@@ -26,21 +29,29 @@ public class ClientMeetingMain {
                             client,
                             startProcessorCallback());
         } else {
-            startProcessor();
+            startProcessor(null);
         }
+    }
+
+    private static ProcessInstance getProcessInstance(final String businessKey){
+        //try getting the processInstance here
+        ProcessInstance i = new ProcessInstanceClientBuilder().getNewProcessInstanceClient(WFENGINE_CONNECTED)
+                .getProcessInstanceByBusinessKey(businessKey);
+        LOGGER.info("Process instance found: " + i.getBusinessKey());
+        return i;
     }
 
     private static ThrowingFunction<ExternalTask, ExternalTask> startProcessorCallback() {
         return ExternalTask -> {
-            startProcessor();
+            startProcessor(getProcessInstance(DEFAULT_BUSINESS_KEY));
             return ExternalTask;
         };
     }
 
-    private static void startProcessor() throws InitException, AuthenticationException {
-        new ClientMeetingController(new SymphonyClientBuilder()).notifyClientMeeting(
-            new ClientMeetingEvent("fay.adams@credit-suisse.com",
-             "fay", LocalDateTime.now().plusDays(1))
+    private static void startProcessor(ProcessInstance processInstance) throws InitException, AuthenticationException {
+        new ClientMeetingController(new SymphonyClientBuilder(), processInstance).notifyClientMeeting(
+            new ClientMeetingEvent("marianne.celino@credit-suisse.com",
+             "mcelino", LocalDateTime.now().plusDays(1))
         );
     }
 }

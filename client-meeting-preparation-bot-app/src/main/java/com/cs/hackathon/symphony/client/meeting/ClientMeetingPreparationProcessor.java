@@ -1,8 +1,9 @@
 package com.cs.hackathon.symphony.client.meeting;
 
-import com.cs.hackathon.symphony.ActionsFromMessageGetter;
-import com.cs.hackathon.symphony.SymphonyClientBuilder;
-import com.cs.hackathon.symphony.ThrowingFunction;
+import camunda.TaskClient;
+import camunda.model.ProcessInstance;
+import camunda.model.Task;
+import com.cs.hackathon.symphony.*;
 import com.cs.hackathon.symphony.client.meeting.init.RmConversationInitiator;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicHandlerMap;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicInformation;
@@ -30,11 +31,13 @@ public class ClientMeetingPreparationProcessor {
     private final Function<ClientMeetingEvent, Map<String, TopicInformation>> clientMeetingPreparer;
     private final SymphonyClient symphonyClient;
     private final SymphonyClientBuilder symphonyClientBuilder;
+    private final ProcessInstance processInstance;
     private final ActionsFromMessageGetter actionsFromMessageGetter = new ActionsFromMessageGetter();
 
-    public ClientMeetingPreparationProcessor(SymphonyClientBuilder symphonyClientBuilder) throws InitException, AuthenticationException {
+    public ClientMeetingPreparationProcessor(SymphonyClientBuilder symphonyClientBuilder, ProcessInstance processInstance) throws InitException, AuthenticationException {
         this.symphonyClient = symphonyClientBuilder.getNewSymphonyClient();
         this.symphonyClientBuilder = symphonyClientBuilder;
+        this.processInstance = processInstance;
         this.clientMeetingPreparer = notifyRmOfAppointmentAndCollectTopicsToDiscuss()
                 .andThen(discussRequestedTopics())
                 .andThen(discussRemainingTopics())
@@ -82,6 +85,8 @@ public class ClientMeetingPreparationProcessor {
                 System.out.println("Thank you for your response. " + symMessage.getMessageText());
                 List<Action> actions = actionsFromMessageGetter.getActions(symMessage.getMessageText());
                 collectedActions.addAll(actions);
+                //complete task in worfklow
+                completeTask(symphonyClient.getLocalUser().getEmailAddress());
                 messageWaiter.countDown();
             };
 
@@ -96,4 +101,12 @@ public class ClientMeetingPreparationProcessor {
         };
     }
 
+    private void completeTask(String userEmail){
+        if (processInstance == null) return;
+
+        TaskClient client = new TaskClientBuilder().getNewTaskClient(true);
+        Task task = client.getTask(processInstance.getId(), userEmail);
+        client.completeTask(task.getId());
+        LOGGER.info("Completed task " + task.getId() + " for user " + userEmail);
+    }
 }
