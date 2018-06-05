@@ -3,6 +3,8 @@ package com.cs.hackathon.symphony.client.meeting;
 import com.cs.hackathon.symphony.SymphonyClientBuilder;
 import com.cs.hackathon.symphony.workflow.WorkflowEngine;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicInformation;
+import com.cs.hackathon.symphony.model.CallReportRequest;
+import com.cs.hackathon.symphony.model.ClientMeetingEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.exceptions.AuthenticationException;
@@ -28,7 +30,7 @@ public class ClientMeetingController {
     }
 
     private Function<Map<String, TopicInformation>, CallReportRequest> handleClientPreparationResponse() {
-        return CallReportRequest::new;
+        return map -> new CallReportRequest(map, "report1");
     }
 
     private Function<ClientMeetingEvent, Map<String, TopicInformation>> initiateClientPreparationCollection() {

@@ -1,12 +1,12 @@
 package com.cs.hackathon.symphony.client.meeting.topics.legalid;
 
 import com.cs.hackathon.symphony.ThrowingFunction;
-import com.cs.hackathon.symphony.workflow.WorkflowEngine;
-import com.cs.hackathon.symphony.client.meeting.ClientMeetingEvent;
 import com.cs.hackathon.symphony.client.meeting.init.RmConversationInitiator;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicHandler;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicHandlerMap;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicInformation;
+import com.cs.hackathon.symphony.model.ClientMeetingEvent;
+import com.cs.hackathon.symphony.workflow.WorkflowEngine;
 import com.cs.hackathon.symphony.wrapper.MessageSender;
 import nlp.model.Action;
 import org.slf4j.Logger;

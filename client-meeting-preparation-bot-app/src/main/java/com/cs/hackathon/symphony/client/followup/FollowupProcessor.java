@@ -3,7 +3,7 @@ package com.cs.hackathon.symphony.client.followup;
 import com.cs.hackathon.symphony.ActionsFromMessageGetter;
 import com.cs.hackathon.symphony.SymphonyClientBuilder;
 import com.cs.hackathon.symphony.ThrowingFunction;
-import com.cs.hackathon.symphony.client.meeting.ClientMeetingEvent;
+import com.cs.hackathon.symphony.model.ClientMeetingEvent;
 import com.cs.hackathon.symphony.wrapper.MessageSender;
 import nlp.model.Action;
 import org.symphonyoss.client.SymphonyClient;

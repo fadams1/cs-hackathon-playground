@@ -1,7 +1,7 @@
 package com.cs.hackathon.symphony.client.meeting.topics.investment;
 
+import com.cs.hackathon.symphony.model.ClientMeetingEvent;
 import com.cs.hackathon.symphony.workflow.WorkflowEngine;
-import com.cs.hackathon.symphony.client.meeting.ClientMeetingEvent;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicHandler;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicHandlerMap;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicInformation;
@@ -21,9 +21,9 @@ public class InvestmentTopicHandler implements TopicHandler {
     }
 
     @Override
-    public void complete(WorkflowEngine engine) {
-        if (engine != null) {
-            engine.completeTask("bot.user41@example.com");
+    public void complete(WorkflowEngine workflowEngine) {
+        if (workflowEngine != null) {
+            workflowEngine.completeTask("bot.user41@example.com");
         }
     }
 

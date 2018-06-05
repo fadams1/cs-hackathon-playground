@@ -1,6 +1,7 @@
 package com.cs.hackathon.symphony.client.meeting;
 
 import com.cs.hackathon.symphony.SymphonyClientBuilder;
+import com.cs.hackathon.symphony.model.ClientMeetingEvent;
 import com.cs.hackathon.symphony.wrapper.MessageSender;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.exceptions.AuthenticationException;
@@ -26,7 +27,7 @@ public class ClientMeetingPreparationProcessorConsoleLocalRunner {
         };
         ClientMeetingController processor = new ClientMeetingController(symphonyClientBuilder, null);
         processor.notifyClientMeeting(new ClientMeetingEvent(
-                "abc@email.com", "clientA", LocalDateTime.now().plusDays(1)
-        ));
+                "abc@email.com", "clientA", LocalDateTime.now().plusDays(1),
+                "Starbucks, Kembangan"));
     }
 }

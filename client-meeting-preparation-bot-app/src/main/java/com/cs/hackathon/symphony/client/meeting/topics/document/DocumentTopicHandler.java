@@ -1,10 +1,10 @@
 package com.cs.hackathon.symphony.client.meeting.topics.document;
 
-import com.cs.hackathon.symphony.workflow.WorkflowEngine;
-import com.cs.hackathon.symphony.client.meeting.ClientMeetingEvent;
+import com.cs.hackathon.symphony.model.ClientMeetingEvent;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicHandler;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicHandlerMap;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicInformation;
+import com.cs.hackathon.symphony.workflow.WorkflowEngine;
 import com.cs.hackathon.symphony.wrapper.MessageSender;
 import nlp.model.Action;
 import org.symphonyoss.client.exceptions.MessagesException;
@@ -33,7 +33,9 @@ public class DocumentTopicHandler implements TopicHandler {
 
     @Override
     public void complete(WorkflowEngine workflowEngine) {
-        workflowEngine.completeTask("bot.user41@example.com");
+        if (workflowEngine != null) {
+            workflowEngine.completeTask("bot.user41@example.com");
+        }
     }
 
     @Override

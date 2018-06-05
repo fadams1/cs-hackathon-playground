@@ -1,6 +1,6 @@
 package com.cs.hackathon.symphony.client.meeting.init;
 
-import com.cs.hackathon.symphony.client.meeting.ClientMeetingEvent;
+import com.cs.hackathon.symphony.model.ClientMeetingEvent;
 import com.cs.hackathon.symphony.client.meeting.topics.legalid.LegalIdInformation;
 
 import java.time.format.DateTimeFormatter;

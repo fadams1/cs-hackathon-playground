@@ -31,8 +31,8 @@ public class LegalIdMap implements LegalIdRepository {
 
     private Set<LegalIdInformation> faysLegalIds() {
         Set<LegalIdInformation> faysIds = new HashSet<>();
-        faysIds.add(new LegalIdInformation("Expired Passport", LocalDateTime.now().minusDays(1)));
-        faysIds.add(new LegalIdInformation("Almost expired Passport", LocalDateTime.now().plusMonths(2)));
+        faysIds.add(new LegalIdInformation("UK Passport", LocalDateTime.now().minusDays(1)));
+        faysIds.add(new LegalIdInformation("Singapore Employment Pass", LocalDateTime.now().plusMonths(2)));
         faysIds.add(new LegalIdInformation("Passport", LocalDateTime.now().plusMonths(5)));
         return faysIds;
     }

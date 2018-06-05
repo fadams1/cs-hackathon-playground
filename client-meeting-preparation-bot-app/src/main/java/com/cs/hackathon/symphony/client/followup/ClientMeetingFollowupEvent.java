@@ -1,6 +1,6 @@
 package com.cs.hackathon.symphony.client.followup;
 
-import com.cs.hackathon.symphony.client.meeting.ClientMeetingEvent;
+import com.cs.hackathon.symphony.model.ClientMeetingEvent;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicInformation;
 
 import java.util.Map;
