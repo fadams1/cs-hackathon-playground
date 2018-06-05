@@ -3,8 +3,7 @@ package com.cs.hackathon.symphony.client.meeting;
 import com.cs.hackathon.symphony.ActionsFromMessageGetter;
 import com.cs.hackathon.symphony.SymphonyClientBuilder;
 import com.cs.hackathon.symphony.ThrowingFunction;
-import com.cs.hackathon.symphony.client.meeting.util.CallReportCompletionTracker;
-import com.cs.hackathon.symphony.client.meeting.util.ClientMeetingTracker;
+import com.cs.hackathon.symphony.client.meeting.util.*;
 import com.cs.hackathon.symphony.workflow.WorkflowEngine;
 import com.cs.hackathon.symphony.client.meeting.init.RmConversationInitiator;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicHandler;
@@ -129,9 +128,12 @@ public class ClientMeetingPreparationProcessor {
     }
 
     private void registerSubscriptions(ClientMeetingEvent clientMeetingEvent) throws InitException, AuthenticationException {
+        if (workflowEngine == null) return;
+
         new EmailSender(workflowEngine, clientMeetingEvent.getRmEmail());
         new CallReportLogger(workflowEngine);
         new ClientMeetingTracker(workflowEngine);
+        new CallReportInitiator(workflowEngine);
         new CallReportCompletionTracker(workflowEngine);
     }
 
