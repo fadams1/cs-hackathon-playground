@@ -1,8 +1,5 @@
 package com.cs.hackathon.symphony.client.meeting.topics;
 
-import com.cs.hackathon.symphony.WorkflowEngine;
-import com.cs.hackathon.symphony.client.meeting.topics.document.DocumentTopicHandler;
-import com.cs.hackathon.symphony.client.meeting.topics.investment.InvestmentTopicHandler;
 import com.cs.hackathon.symphony.client.meeting.topics.legalid.LegalIdMap;
 import com.cs.hackathon.symphony.client.meeting.topics.legalid.LegalIdTopicHandler;
 

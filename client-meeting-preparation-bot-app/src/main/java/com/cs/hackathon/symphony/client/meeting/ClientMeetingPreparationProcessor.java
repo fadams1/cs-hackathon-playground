@@ -3,6 +3,8 @@ package com.cs.hackathon.symphony.client.meeting;
 import com.cs.hackathon.symphony.ActionsFromMessageGetter;
 import com.cs.hackathon.symphony.SymphonyClientBuilder;
 import com.cs.hackathon.symphony.ThrowingFunction;
+import com.cs.hackathon.symphony.client.meeting.util.CallReportCompletionTracker;
+import com.cs.hackathon.symphony.client.meeting.util.ClientMeetingTracker;
 import com.cs.hackathon.symphony.workflow.WorkflowEngine;
 import com.cs.hackathon.symphony.client.meeting.init.RmConversationInitiator;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicHandler;
@@ -101,8 +103,8 @@ public class ClientMeetingPreparationProcessor {
                 messageWaiter.countDown();
             };
 
-            new EmailSender(workflowEngine, clientMeetingEvent.getRmEmail());
-            new CallReportLogger(workflowEngine);
+            //register workflow subscriptions
+            registerSubscriptions(clientMeetingEvent);
 
             initialChat.addListener(chatListener);
             initialChat.sendMessage(RmConversationInitiator.HELLO_RM.apply(clientMeetingEvent), false);
@@ -113,6 +115,13 @@ public class ClientMeetingPreparationProcessor {
 
             return new TopicRequestContainer(clientMeetingEvent, collectedActions, symphonyClient, initialChat);
         };
+    }
+
+    private void registerSubscriptions(ClientMeetingEvent clientMeetingEvent) throws InitException, AuthenticationException {
+        new EmailSender(workflowEngine, clientMeetingEvent.getRmEmail());
+        new CallReportLogger(workflowEngine);
+        new ClientMeetingTracker(workflowEngine);
+        new CallReportCompletionTracker(workflowEngine);
     }
 
 }

@@ -7,49 +7,37 @@
     <bpmn:laneSet id="LaneSet_1xsbuun">
       <bpmn:lane id="Lane_1e2gq67" name="RM">
         <bpmn:flowNodeRef>client-meeting-process-end</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>task-fill-call-report</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>task-meet-client</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>task-gather-topics</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>task-document-check</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>task-send-email</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task-meet-client</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task-complere-call-report</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_021zdtv" />
       </bpmn:lane>
       <bpmn:lane id="Lane_0hklkp9" name="SYMPHONY BOT">
         <bpmn:flowNodeRef>client-meeting-process-start</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>task-initiate-call-report</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>IntermediateThrowEvent_169uf4o</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>task-initiate-rm-conversation</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>task-save-call-report</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task-initiate-call-report</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:startEvent id="client-meeting-process-start" name="Meeting Event Received">
       <bpmn:outgoing>SequenceFlow_1rz6y6o</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="SequenceFlow_1rz6y6o" sourceRef="client-meeting-process-start" targetRef="task-initiate-rm-conversation" />
-    <bpmn:sequenceFlow id="SequenceFlow_0h5xn4p" sourceRef="task-initiate-call-report" targetRef="task-fill-call-report" />
-    <bpmn:sequenceFlow id="SequenceFlow_12m64wr" sourceRef="task-fill-call-report" targetRef="client-meeting-process-end" />
+    <bpmn:sequenceFlow id="SequenceFlow_0h5xn4p" sourceRef="task-initiate-call-report" targetRef="task-complere-call-report" />
+    <bpmn:sequenceFlow id="SequenceFlow_12m64wr" sourceRef="task-complere-call-report" targetRef="client-meeting-process-end" />
     <bpmn:endEvent id="client-meeting-process-end" name="End">
       <bpmn:incoming>SequenceFlow_12m64wr</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0w3v1yx" sourceRef="task-save-call-report" targetRef="task-meet-client" />
     <bpmn:sequenceFlow id="SequenceFlow_0gkcjzm" sourceRef="task-send-email" targetRef="task-save-call-report" />
-    <bpmn:task id="task-fill-call-report" name="FILL UP CALL REPORT">
-      <bpmn:incoming>SequenceFlow_0h5xn4p</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_12m64wr</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:task id="task-initiate-call-report" name="INITIATE CALL REPORT PROCESS">
-      <bpmn:incoming>SequenceFlow_1qmk5qq</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0h5xn4p</bpmn:outgoing>
-    </bpmn:task>
     <bpmn:sequenceFlow id="SequenceFlow_0hd57lv" sourceRef="task-meet-client" targetRef="IntermediateThrowEvent_169uf4o" />
     <bpmn:sequenceFlow id="SequenceFlow_1qmk5qq" sourceRef="IntermediateThrowEvent_169uf4o" targetRef="task-initiate-call-report" />
     <bpmn:sequenceFlow id="SequenceFlow_1rit9ks" sourceRef="task-gather-topics" targetRef="task-document-check" />
     <bpmn:sequenceFlow id="SequenceFlow_09fwz96" sourceRef="task-document-check" targetRef="task-send-email" />
     <bpmn:sequenceFlow id="SequenceFlow_0dekhi1" sourceRef="task-initiate-rm-conversation" targetRef="task-gather-topics" />
-    <bpmn:task id="task-meet-client" name="MEET CLIENT">
-      <bpmn:incoming>SequenceFlow_0w3v1yx</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0hd57lv</bpmn:outgoing>
-    </bpmn:task>
     <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_169uf4o" name="2 business days">
       <bpmn:incoming>SequenceFlow_0hd57lv</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1qmk5qq</bpmn:outgoing>
@@ -76,6 +64,18 @@
     <bpmn:serviceTask id="task-send-email" name="EMAIL CLIENT MEETING PACK" camunda:type="external" camunda:topic="topic-send-email">
       <bpmn:incoming>SequenceFlow_09fwz96</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0gkcjzm</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="task-meet-client" name="MEET CLIENT" camunda:type="external" camunda:topic="topic-meet-client">
+      <bpmn:incoming>SequenceFlow_0w3v1yx</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0hd57lv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="task-initiate-call-report" name="INITIATE CALL REPORT PROCESS" camunda:type="external" camunda:topic="topic-initiate-call-report">
+      <bpmn:incoming>SequenceFlow_1qmk5qq</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0h5xn4p</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="task-complere-call-report" name="FILL UP CALL REPORT" camunda:type="external" camunda:topic="topic-complete-call-report">
+      <bpmn:incoming>SequenceFlow_0h5xn4p</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_12m64wr</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:association id="Association_0e0oo4r" sourceRef="task-gather-topics" targetRef="TextAnnotation_14zpdow" />
     <bpmn:association id="Association_10lgtkn" sourceRef="IntermediateThrowEvent_169uf4o" targetRef="TextAnnotation_09ikeuf" />
@@ -116,15 +116,6 @@
         <di:waypoint x="359" y="318" />
         <di:waypoint x="465" y="318" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Task_1b0zva5_di" bpmnElement="task-meet-client">
-        <dc:Bounds x="1152" y="81" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_1c6llnf_di" bpmnElement="task-initiate-call-report">
-        <dc:Bounds x="1483" y="278" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_1ksls7q_di" bpmnElement="task-fill-call-report">
-        <dc:Bounds x="1483" y="69" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0h5xn4p_di" bpmnElement="SequenceFlow_0h5xn4p">
         <di:waypoint x="1533" y="278" />
         <di:waypoint x="1533" y="149" />
@@ -198,6 +189,15 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1aaj34f_di" bpmnElement="task-save-call-report">
         <dc:Bounds x="1152" y="278" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1bu2gac_di" bpmnElement="task-meet-client">
+        <dc:Bounds x="1152" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0pzp86p_di" bpmnElement="task-initiate-call-report">
+        <dc:Bounds x="1483" y="278" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_12t2hp7_di" bpmnElement="task-complere-call-report">
+        <dc:Bounds x="1483" y="69" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

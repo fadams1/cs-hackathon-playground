@@ -1,7 +1,7 @@
 package com.cs.hackathon.symphony.client.meeting.topics.legalid;
 
 import com.cs.hackathon.symphony.ThrowingFunction;
-import com.cs.hackathon.symphony.WorkflowEngine;
+import com.cs.hackathon.symphony.workflow.WorkflowEngine;
 import com.cs.hackathon.symphony.client.meeting.ClientMeetingEvent;
 import com.cs.hackathon.symphony.client.meeting.init.RmConversationInitiator;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicHandler;
