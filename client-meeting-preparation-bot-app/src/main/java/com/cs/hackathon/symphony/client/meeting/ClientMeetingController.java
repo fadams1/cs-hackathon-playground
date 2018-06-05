@@ -1,8 +1,7 @@
 package com.cs.hackathon.symphony.client.meeting;
 
-import camunda.model.ProcessInstance;
 import com.cs.hackathon.symphony.SymphonyClientBuilder;
-import com.cs.hackathon.symphony.WorkflowEngine;
+import com.cs.hackathon.symphony.workflow.WorkflowEngine;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

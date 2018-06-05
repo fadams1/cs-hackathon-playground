@@ -1,7 +1,9 @@
 package com.cs.hackathon.symphony.client.meeting;
 
-import camunda.model.ProcessInstance;
 import com.cs.hackathon.symphony.*;
+import com.cs.hackathon.symphony.workflow.ExternalTaskClientBuilder;
+import com.cs.hackathon.symphony.workflow.WorkflowEngine;
+import com.cs.hackathon.symphony.workflow.WorkflowEngineBuilder;
 import org.camunda.bpm.client.ExternalTaskClient;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.slf4j.Logger;

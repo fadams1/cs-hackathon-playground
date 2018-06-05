@@ -1,17 +1,18 @@
 package com.cs.hackathon.symphony.client.meeting;
 
-import camunda.TaskClient;
-import camunda.model.ProcessInstance;
-import camunda.model.Task;
-import com.cs.hackathon.symphony.*;
+import com.cs.hackathon.symphony.ActionsFromMessageGetter;
+import com.cs.hackathon.symphony.SymphonyClientBuilder;
+import com.cs.hackathon.symphony.ThrowingFunction;
+import com.cs.hackathon.symphony.workflow.WorkflowEngine;
 import com.cs.hackathon.symphony.client.meeting.init.RmConversationInitiator;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicHandler;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicHandlerMap;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicInformation;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicRequestContainer;
+import com.cs.hackathon.symphony.client.meeting.util.CallReportLogger;
+import com.cs.hackathon.symphony.client.meeting.util.EmailSender;
 import com.cs.hackathon.symphony.wrapper.MessageSender;
 import nlp.model.Action;
-import org.camunda.bpm.engine.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
@@ -23,7 +24,6 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class ClientMeetingPreparationProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientMeetingPreparationProcessor.class);
@@ -100,6 +100,9 @@ public class ClientMeetingPreparationProcessor {
                 workflowEngine.completeTask(symphonyClient.getLocalUser().getEmailAddress());
                 messageWaiter.countDown();
             };
+
+            new EmailSender(workflowEngine, clientMeetingEvent.getRmEmail());
+            new CallReportLogger(workflowEngine);
 
             initialChat.addListener(chatListener);
             initialChat.sendMessage(RmConversationInitiator.HELLO_RM.apply(clientMeetingEvent), false);
