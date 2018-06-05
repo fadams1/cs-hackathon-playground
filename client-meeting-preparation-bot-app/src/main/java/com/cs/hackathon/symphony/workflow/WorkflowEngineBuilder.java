@@ -1,4 +1,4 @@
-package com.cs.hackathon.symphony;
+package com.cs.hackathon.symphony.workflow;
 
 import camunda.CamundaConfigLoader;
 import camunda.model.CamundaConfig;

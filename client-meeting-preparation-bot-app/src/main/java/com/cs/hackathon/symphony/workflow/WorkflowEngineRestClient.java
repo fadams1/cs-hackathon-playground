@@ -1,21 +1,15 @@
-package com.cs.hackathon.symphony;
+package com.cs.hackathon.symphony.workflow;
 
 import camunda.CamundaClientException;
 import camunda.model.ProcessInstance;
 import camunda.model.ProcessInstanceList;
-import com.cs.hackathon.symphony.client.meeting.Engine;
-import org.camunda.bpm.engine.ProcessEngine;
-import org.camunda.bpm.engine.ProcessEngines;
-import org.camunda.bpm.engine.runtime.Execution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 public class WorkflowEngineRestClient {
     private String camundaEngineURL;

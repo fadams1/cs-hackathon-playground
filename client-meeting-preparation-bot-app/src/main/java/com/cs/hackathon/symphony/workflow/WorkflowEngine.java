@@ -1,10 +1,9 @@
-package com.cs.hackathon.symphony;
+package com.cs.hackathon.symphony.workflow;
 
 
 import camunda.TaskClient;
 import camunda.model.ProcessInstance;
 import camunda.model.Task;
-import org.camunda.bpm.engine.ProcessEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package com.cs.hackathon.symphony.client.meeting;
+package com.cs.hackathon.symphony.workflow;
 
 public class Engine {
 

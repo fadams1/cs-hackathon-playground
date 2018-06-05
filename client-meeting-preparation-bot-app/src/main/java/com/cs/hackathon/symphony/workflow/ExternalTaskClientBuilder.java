@@ -1,4 +1,4 @@
-package com.cs.hackathon.symphony;
+package com.cs.hackathon.symphony.workflow;
 
 import org.camunda.bpm.client.ExternalTaskClient;
 import org.camunda.bpm.client.task.ExternalTask;
