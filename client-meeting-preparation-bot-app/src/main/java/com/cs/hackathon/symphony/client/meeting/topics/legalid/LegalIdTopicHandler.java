@@ -97,11 +97,11 @@ public class LegalIdTopicHandler implements TopicHandler {
         return TopicHandlerMap.LEGAL_ID;
     }
 
-    private Predicate<LegalIdInformation> isExpired() {
+    public static Predicate<LegalIdInformation> isExpired() {
         return legalIdInformation -> LocalDateTime.now().isAfter(legalIdInformation.getExpiry());
     }
 
-    private Predicate<LegalIdInformation> isNearingExpiry() {
+    public static Predicate<LegalIdInformation> isNearingExpiry() {
         return legalIdInformation -> LocalDateTime.now().plusMonths(3).isAfter(legalIdInformation.getExpiry());
     }
 

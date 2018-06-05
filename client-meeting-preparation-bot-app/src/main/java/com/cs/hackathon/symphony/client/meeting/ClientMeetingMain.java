@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 
 public class ClientMeetingMain {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientMeetingController.class);
-    private static final boolean WFENGINE_CONNECTED = true;
+    private static final boolean WFENGINE_CONNECTED = false;
     private static final String TOPIC_INITIATE_RM_CONVERSATION = "topic-initiate-rm-conversation";
     public static final String DEFAULT_BUSINESS_KEY = "cs-hf-new-client-meeting-process";
 
@@ -48,8 +48,8 @@ public class ClientMeetingMain {
 
     private static void startProcessor(WorkflowEngine workflowEngine) throws InitException, AuthenticationException {
         new ClientMeetingController(new SymphonyClientBuilder(), workflowEngine).notifyClientMeeting(
-            new ClientMeetingEvent("marianne.celino@credit-suisse.com",
-             "mcelino", LocalDateTime.now().plusDays(1))
+            new ClientMeetingEvent("noopur.n.jain@credit-suisse.com",
+             "fay", LocalDateTime.now().plusDays(1))
         );
     }
 }

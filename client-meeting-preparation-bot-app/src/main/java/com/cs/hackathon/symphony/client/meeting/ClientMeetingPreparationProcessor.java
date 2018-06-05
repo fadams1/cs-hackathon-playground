@@ -99,12 +99,16 @@ public class ClientMeetingPreparationProcessor {
                 List<Action> actions = actionsFromMessageGetter.getActions(symMessage.getMessageText());
                 collectedActions.addAll(actions);
                 //complete task in worfklow
-                workflowEngine.completeTask(symphonyClient.getLocalUser().getEmailAddress());
+                if (workflowEngine != null) {
+                    workflowEngine.completeTask(symphonyClient.getLocalUser().getEmailAddress());
+                }
                 messageWaiter.countDown();
             };
 
             //register workflow subscriptions
-            registerSubscriptions(clientMeetingEvent);
+            if (workflowEngine !=null) {
+                registerSubscriptions(clientMeetingEvent);
+            }
 
             initialChat.addListener(chatListener);
             initialChat.sendMessage(RmConversationInitiator.HELLO_RM.apply(clientMeetingEvent), false);
