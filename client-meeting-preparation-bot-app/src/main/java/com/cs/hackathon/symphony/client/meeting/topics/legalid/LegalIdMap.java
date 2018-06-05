@@ -3,12 +3,27 @@ package com.cs.hackathon.symphony.client.meeting.topics.legalid;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class LegalIdMap implements LegalIdRepository {
+    private static final String LEGAL_ID_ML = "" +
+            "<messageML>" +
+                    "<div class=\"card\">" +
+                        "<div class=\"cardBody\">" +
+                            "<h1>Here are the legal ID information of your client</h1>" +
+                            "<br/>" +
+                            "<span>Legal ID Type: ${entity['legalIdType']}</span>" +
+                            "<br/>" +
+                            "<hr/>" +
+                            "<span style=\"color:red\">Expiry Date: ${entity['legalIdExpiry']}</span>" +
+                        "</div>" +
+                    "</div>" +
+            "</messageML>";
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private final Map<String, Set<LegalIdInformation>> legalIdMap = new HashMap<>();
 
     public LegalIdMap() {
@@ -47,17 +62,12 @@ public class LegalIdMap implements LegalIdRepository {
     @Override
     public SymMessage generateLegalIdCard(LegalIdInformation legalIdInformation) {
         SymMessage msg = new SymMessage();
-        msg.setMessage("<div data-format=\"PresentationML\" data-version=\"2.0\"> " +
-                "<div class=\"card\">\n" +
-                "<div class=\"cardHeader\"><h1>Here are the legal ID information of your client</h1></div>\n" +
-                "<div class=\"cardBody\">" +
-                "<span>Legal ID Type: </span>\n" + legalIdInformation.getLegalIdType() +
-                "<br/>\n" +
-                "<hr/>\n"+
-                "<span>Expiry Date: </span>\n" + legalIdInformation.getExpiry() +
-                "</div>" +
-                "</div>" +
-                "</div>");
+
+        msg.setMessage(LEGAL_ID_ML);
+        msg.setEntityData("{" +
+                "    \"legalIdType\":" + "\""+ legalIdInformation.getLegalIdType() + "\"," +
+                "    \"legalIdExpiry\":" + "\""+ legalIdInformation.getExpiry().format(DATE_TIME_FORMATTER) + "\"" +
+                "}");
 
         return msg;
     }
