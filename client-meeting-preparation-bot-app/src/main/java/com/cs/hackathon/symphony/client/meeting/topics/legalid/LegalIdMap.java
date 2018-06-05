@@ -14,6 +14,7 @@ public class LegalIdMap implements LegalIdRepository {
     public LegalIdMap() {
         legalIdMap.put("fay", faysLegalIds());
         legalIdMap.put("mj", mjsLegalIds());
+        legalIdMap.put("mcelino", mjsLegalIds());
     }
 
     private Set<LegalIdInformation> faysLegalIds() {
@@ -28,6 +29,13 @@ public class LegalIdMap implements LegalIdRepository {
         Set<LegalIdInformation> mjsLegalIds = new HashSet<>();
         mjsLegalIds.add(new LegalIdInformation("Passport1", LocalDateTime.now().plusMonths(5)));
         mjsLegalIds.add(new LegalIdInformation("Passport2", LocalDateTime.now().plusMonths(4)));
+        return mjsLegalIds;
+    }
+
+    private Set<LegalIdInformation> mcelinoLegalIds() {
+        Set<LegalIdInformation> mjsLegalIds = new HashSet<>();
+        mjsLegalIds.add(new LegalIdInformation("Passport1", LocalDateTime.now().plusMonths(1)));
+        mjsLegalIds.add(new LegalIdInformation("Passport2", LocalDateTime.now().plusMonths(2)));
         return mjsLegalIds;
     }
 

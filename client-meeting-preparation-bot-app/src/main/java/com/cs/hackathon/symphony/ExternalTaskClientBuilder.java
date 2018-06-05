@@ -22,11 +22,11 @@ public class ExternalTaskClientBuilder {
     public void subscribeToTopic(final String topicName, ExternalTaskClient client, Function<ExternalTask, ExternalTask> callback) {
         // subscribe to an external task topic as specified in the process
         client.subscribe(topicName)
-        .lockDuration(1000) // the default lock duration is 20 seconds, but you can override this
+        //.lockDuration(1000) // the default lock duration is 20 seconds, but you can override this
         .handler((externalTask, externalTaskService) -> {
-            callback.apply(externalTask);
             // Complete the task
             externalTaskService.complete(externalTask);
+            callback.apply(externalTask);
         })
         .open();
     }

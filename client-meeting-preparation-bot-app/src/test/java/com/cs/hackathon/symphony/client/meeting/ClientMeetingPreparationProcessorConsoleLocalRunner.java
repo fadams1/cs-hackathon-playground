@@ -24,7 +24,7 @@ public class ClientMeetingPreparationProcessorConsoleLocalRunner {
                 return null;
             }
         };
-        ClientMeetingController processor = new ClientMeetingController(symphonyClientBuilder);
+        ClientMeetingController processor = new ClientMeetingController(symphonyClientBuilder,null);
         processor.notifyClientMeeting(new ClientMeetingEvent(
                 "abc@email.com", "clientA", LocalDateTime.now().plusDays(1)
         ));

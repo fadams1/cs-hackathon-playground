@@ -1,9 +1,11 @@
 package com.cs.hackathon.symphony.client.meeting.topics.legalid;
 
 import com.cs.hackathon.symphony.ThrowingFunction;
+import com.cs.hackathon.symphony.WorkflowEngine;
 import com.cs.hackathon.symphony.client.meeting.ClientMeetingEvent;
 import com.cs.hackathon.symphony.client.meeting.init.RmConversationInitiator;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicHandler;
+import com.cs.hackathon.symphony.client.meeting.topics.TopicHandlerMap;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicInformation;
 import com.cs.hackathon.symphony.wrapper.MessageSender;
 import nlp.model.Action;
@@ -35,6 +37,7 @@ public class LegalIdTopicHandler implements TopicHandler {
 
     @Override
     public TopicInformation collectTopicInformation(ClientMeetingEvent clientMeetingEvent, Action action, MessageSender rmChat) throws MessagesException {
+
         Set<LegalIdInformation> legalIdInformationFor = legalIdRepository.getLegalIdInformationFor(clientMeetingEvent.getClientId());
         if (!areAnyLegalIdsExpiredOrNearingExpiry(legalIdInformationFor)) {
             rmChat.sendMessage(CLIENT_IDS_ARE_IN_ORDER, false);
@@ -89,11 +92,23 @@ public class LegalIdTopicHandler implements TopicHandler {
         return false;
     }
 
+    @Override
+    public String getTopicName() {
+        return TopicHandlerMap.LEGAL_ID;
+    }
+
     private Predicate<LegalIdInformation> isExpired() {
         return legalIdInformation -> LocalDateTime.now().isAfter(legalIdInformation.getExpiry());
     }
 
     private Predicate<LegalIdInformation> isNearingExpiry() {
         return legalIdInformation -> LocalDateTime.now().plusMonths(3).isAfter(legalIdInformation.getExpiry());
+    }
+
+    @Override
+    public void complete(WorkflowEngine workflowEngine) {
+        if (workflowEngine != null) {
+            workflowEngine.completeTask("bot.user41@example.com");
+        }
     }
 }

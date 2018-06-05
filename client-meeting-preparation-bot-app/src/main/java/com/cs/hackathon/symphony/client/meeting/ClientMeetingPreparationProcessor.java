@@ -5,11 +5,13 @@ import camunda.model.ProcessInstance;
 import camunda.model.Task;
 import com.cs.hackathon.symphony.*;
 import com.cs.hackathon.symphony.client.meeting.init.RmConversationInitiator;
+import com.cs.hackathon.symphony.client.meeting.topics.TopicHandler;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicHandlerMap;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicInformation;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicRequestContainer;
 import com.cs.hackathon.symphony.wrapper.MessageSender;
 import nlp.model.Action;
+import org.camunda.bpm.engine.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
@@ -17,12 +19,10 @@ import org.symphonyoss.client.exceptions.AuthenticationException;
 import org.symphonyoss.client.exceptions.InitException;
 import org.symphonyoss.client.services.ChatListener;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ClientMeetingPreparationProcessor {
@@ -31,13 +31,13 @@ public class ClientMeetingPreparationProcessor {
     private final Function<ClientMeetingEvent, Map<String, TopicInformation>> clientMeetingPreparer;
     private final SymphonyClient symphonyClient;
     private final SymphonyClientBuilder symphonyClientBuilder;
-    private final ProcessInstance processInstance;
+    private final WorkflowEngine workflowEngine;
     private final ActionsFromMessageGetter actionsFromMessageGetter = new ActionsFromMessageGetter();
 
-    public ClientMeetingPreparationProcessor(SymphonyClientBuilder symphonyClientBuilder, ProcessInstance processInstance) throws InitException, AuthenticationException {
+    public ClientMeetingPreparationProcessor(SymphonyClientBuilder symphonyClientBuilder, WorkflowEngine workflowEngine) throws InitException, AuthenticationException, InitException, AuthenticationException {
         this.symphonyClient = symphonyClientBuilder.getNewSymphonyClient();
         this.symphonyClientBuilder = symphonyClientBuilder;
-        this.processInstance = processInstance;
+        this.workflowEngine = workflowEngine;
         this.clientMeetingPreparer = notifyRmOfAppointmentAndCollectTopicsToDiscuss()
                 .andThen(discussRequestedTopics())
                 .andThen(discussRemainingTopics())
@@ -63,12 +63,23 @@ public class ClientMeetingPreparationProcessor {
 
     private Function<TopicRequestContainer, TopicRequestContainer> discussRequestedTopics() {
         return topicsToDiscuss -> {
-            Map<String, TopicInformation> topicsMap = topicsToDiscuss.getRequestedAction()
-                .stream().map(callTopicHandler(topicsToDiscuss.getClientMeetingEvent(), topicsToDiscuss.getRmChat()))
-                .collect(Collectors.toMap(TopicInformation::getTopicName, ti -> ti));
+            Collection<TopicHandler> possibleTopics = topicHandlerMap.getAll();
+            final Map<String, TopicInformation> topicsMap = new HashMap<>();
+            possibleTopics.forEach(topicHandler -> {
+                if (topicsToDiscuss.getRequestedAction().stream().anyMatch(matchesAction(topicHandler))) {
+                    TopicInformation result = callTopicHandler(topicsToDiscuss.getClientMeetingEvent(), topicsToDiscuss.getRmChat())
+                            .apply(topicsToDiscuss.getRequestedAction().stream().filter(matchesAction(topicHandler)).findFirst().get());
+                    topicsMap.put(result.getTopicName(), result);
+                }
+                topicHandler.complete(workflowEngine);
+            });
             topicsToDiscuss.putAll(topicsMap);
             return topicsToDiscuss;
         };
+    }
+
+    private Predicate<Action> matchesAction(TopicHandler topicHandler) {
+        return action -> action.getAction().equals(topicHandler.getTopicName());
     }
 
     private ThrowingFunction<Action, TopicInformation> callTopicHandler(ClientMeetingEvent clientMeetingEvent, MessageSender rmChat) {
@@ -86,7 +97,7 @@ public class ClientMeetingPreparationProcessor {
                 List<Action> actions = actionsFromMessageGetter.getActions(symMessage.getMessageText());
                 collectedActions.addAll(actions);
                 //complete task in worfklow
-                completeTask(symphonyClient.getLocalUser().getEmailAddress());
+                workflowEngine.completeTask(symphonyClient.getLocalUser().getEmailAddress());
                 messageWaiter.countDown();
             };
 
@@ -101,12 +112,4 @@ public class ClientMeetingPreparationProcessor {
         };
     }
 
-    private void completeTask(String userEmail){
-        if (processInstance == null) return;
-
-        TaskClient client = new TaskClientBuilder().getNewTaskClient(true);
-        Task task = client.getTask(processInstance.getId(), userEmail);
-        client.completeTask(task.getId());
-        LOGGER.info("Completed task " + task.getId() + " for user " + userEmail);
-    }
 }

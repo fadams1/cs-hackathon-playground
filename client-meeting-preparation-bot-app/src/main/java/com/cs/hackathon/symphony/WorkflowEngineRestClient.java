@@ -1,25 +1,32 @@
 package com.cs.hackathon.symphony;
 
-import camunda.CamundaClient;
 import camunda.CamundaClientException;
-import camunda.ProcessInstanceClient;
 import camunda.model.ProcessInstance;
 import camunda.model.ProcessInstanceList;
+import com.cs.hackathon.symphony.client.meeting.Engine;
+import org.camunda.bpm.engine.ProcessEngine;
+import org.camunda.bpm.engine.ProcessEngines;
+import org.camunda.bpm.engine.runtime.Execution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
-public class ProcessInstanceClientProxy extends ProcessInstanceClient {
+public class WorkflowEngineRestClient {
     private String camundaEngineURL;
-    private final Logger logger = LoggerFactory.getLogger(ProcessInstanceClientProxy.class);
+    private final Logger logger = LoggerFactory.getLogger(WorkflowEngineRestClient.class);
 
-    public ProcessInstanceClientProxy(String camundaURL) {
-        super(camundaURL);
+    public WorkflowEngineRestClient(String camundaURL) {
         this.camundaEngineURL = camundaURL;
+    }
+
+    public String getProcessEngineName(){
+        return "default";
     }
 
     public ProcessInstance getProcessInstanceByBusinessKey(String businessKey){
@@ -31,7 +38,8 @@ public class ProcessInstanceClientProxy extends ProcessInstanceClient {
                 .request(MediaType.APPLICATION_JSON)
                 .get();
         if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
-            try {
+            try
+            {
                 handleError(response);
             } catch (CamundaClientException e) {
                 e.printStackTrace();

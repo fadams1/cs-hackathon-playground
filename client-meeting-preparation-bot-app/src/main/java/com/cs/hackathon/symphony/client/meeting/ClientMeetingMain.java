@@ -1,10 +1,7 @@
 package com.cs.hackathon.symphony.client.meeting;
 
 import camunda.model.ProcessInstance;
-import com.cs.hackathon.symphony.ExternalTaskClientBuilder;
-import com.cs.hackathon.symphony.ProcessInstanceClientBuilder;
-import com.cs.hackathon.symphony.SymphonyClientBuilder;
-import com.cs.hackathon.symphony.ThrowingFunction;
+import com.cs.hackathon.symphony.*;
 import org.camunda.bpm.client.ExternalTaskClient;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.slf4j.Logger;
@@ -33,23 +30,22 @@ public class ClientMeetingMain {
         }
     }
 
-    private static ProcessInstance getProcessInstance(final String businessKey){
-        //try getting the processInstance here
-        ProcessInstance i = new ProcessInstanceClientBuilder().getNewProcessInstanceClient(WFENGINE_CONNECTED)
-                .getProcessInstanceByBusinessKey(businessKey);
-        LOGGER.info("Process instance found: " + i.getBusinessKey());
-        return i;
+    private static WorkflowEngine getWorkflowEngine(final boolean enabled, final String businessKey){
+        //get workflow engine details here
+        WorkflowEngine we = new WorkflowEngineBuilder().getNewWorkflowEngine(WFENGINE_CONNECTED, DEFAULT_BUSINESS_KEY);
+        LOGGER.info("Process instance found: " + we.getInstance().getBusinessKey());
+        return we;
     }
 
     private static ThrowingFunction<ExternalTask, ExternalTask> startProcessorCallback() {
         return ExternalTask -> {
-            startProcessor(getProcessInstance(DEFAULT_BUSINESS_KEY));
+            startProcessor(getWorkflowEngine(WFENGINE_CONNECTED, DEFAULT_BUSINESS_KEY));
             return ExternalTask;
         };
     }
 
-    private static void startProcessor(ProcessInstance processInstance) throws InitException, AuthenticationException {
-        new ClientMeetingController(new SymphonyClientBuilder(), processInstance).notifyClientMeeting(
+    private static void startProcessor(WorkflowEngine workflowEngine) throws InitException, AuthenticationException {
+        new ClientMeetingController(new SymphonyClientBuilder(), workflowEngine).notifyClientMeeting(
             new ClientMeetingEvent("marianne.celino@credit-suisse.com",
              "mcelino", LocalDateTime.now().plusDays(1))
         );

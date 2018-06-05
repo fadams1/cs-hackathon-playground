@@ -1,7 +1,9 @@
 package com.cs.hackathon.symphony.client.meeting.topics.document;
 
+import com.cs.hackathon.symphony.WorkflowEngine;
 import com.cs.hackathon.symphony.client.meeting.ClientMeetingEvent;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicHandler;
+import com.cs.hackathon.symphony.client.meeting.topics.TopicHandlerMap;
 import com.cs.hackathon.symphony.client.meeting.topics.TopicInformation;
 import com.cs.hackathon.symphony.wrapper.MessageSender;
 import nlp.model.Action;
@@ -15,7 +17,7 @@ public class DocumentTopicHandler implements TopicHandler {
         return new TopicInformation() {
             @Override
             public String getTopicName() {
-                return "Documents";
+                return TopicHandlerMap.DOCUMENT;
             }
 
             @Override
@@ -28,5 +30,15 @@ public class DocumentTopicHandler implements TopicHandler {
     @Override
     public boolean isTopicRelevent() {
         return false;
+    }
+
+    @Override
+    public void complete(WorkflowEngine workflowEngine) {
+        workflowEngine.completeTask("bot.user41@example.com");
+    }
+
+    @Override
+    public String getTopicName() {
+        return null;
     }
 }
