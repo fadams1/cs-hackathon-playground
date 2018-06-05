@@ -1,6 +1,7 @@
 package com.cs.hackathon.symphony.client.meeting;
 
-import com.cs.hackathon.symphony.*;
+import com.cs.hackathon.symphony.SymphonyClientBuilder;
+import com.cs.hackathon.symphony.ThrowingFunction;
 import com.cs.hackathon.symphony.workflow.ExternalTaskClientBuilder;
 import com.cs.hackathon.symphony.workflow.WorkflowEngine;
 import com.cs.hackathon.symphony.workflow.WorkflowEngineBuilder;
@@ -48,7 +49,7 @@ public class ClientMeetingMain {
 
     private static void startProcessor(WorkflowEngine workflowEngine) throws InitException, AuthenticationException {
         new ClientMeetingController(new SymphonyClientBuilder(), workflowEngine).notifyClientMeeting(
-            new ClientMeetingEvent("noopur.n.jain@credit-suisse.com",
+            new ClientMeetingEvent("fay.adams@credit-suisse.com",
              "fay", LocalDateTime.now().plusDays(1))
         );
     }

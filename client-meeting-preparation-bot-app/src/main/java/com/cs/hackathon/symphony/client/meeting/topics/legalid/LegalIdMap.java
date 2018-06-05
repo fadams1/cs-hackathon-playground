@@ -4,10 +4,7 @@ import org.symphonyoss.symphony.clients.model.SymMessage;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class LegalIdMap implements LegalIdRepository {
     private static final String LEGAL_ID_ML = "" +
@@ -56,7 +53,7 @@ public class LegalIdMap implements LegalIdRepository {
 
     @Override
     public Set<LegalIdInformation> getLegalIdInformationFor(String clientId) {
-        return legalIdMap.get(clientId);
+        return Optional.ofNullable(legalIdMap.get(clientId)).orElse(Collections.emptySet());
     }
 
     @Override
