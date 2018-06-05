@@ -9,17 +9,17 @@
         <bpmn:flowNodeRef>client-meeting-process-end</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>task-fill-call-report</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>task-meet-client</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task-gather-topics</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task-document-check</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task-email-client-pack</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_021zdtv" />
       </bpmn:lane>
       <bpmn:lane id="Lane_0hklkp9" name="SYMPHONY BOT">
         <bpmn:flowNodeRef>client-meeting-process-start</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>task-initiate-call-report</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>task-initiate-rm-conversation</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>task-document-check</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>task-email-client-pack</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>task-save-pending-call-report</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>IntermediateThrowEvent_169uf4o</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>task-delegate-topics</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>task-initiate-rm-conversation</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:startEvent id="client-meeting-process-start" name="Meeting Event Received">
@@ -43,21 +43,9 @@
     </bpmn:task>
     <bpmn:sequenceFlow id="SequenceFlow_0hd57lv" sourceRef="task-meet-client" targetRef="IntermediateThrowEvent_169uf4o" />
     <bpmn:sequenceFlow id="SequenceFlow_1qmk5qq" sourceRef="IntermediateThrowEvent_169uf4o" targetRef="task-initiate-call-report" />
-    <bpmn:sequenceFlow id="SequenceFlow_1rit9ks" sourceRef="task-delegate-topics" targetRef="task-document-check" />
+    <bpmn:sequenceFlow id="SequenceFlow_1rit9ks" sourceRef="task-gather-topics" targetRef="task-document-check" />
     <bpmn:sequenceFlow id="SequenceFlow_09fwz96" sourceRef="task-document-check" targetRef="task-email-client-pack" />
-    <bpmn:serviceTask id="task-initiate-rm-conversation" name="INITIATE RM Conversation" camunda:type="external" camunda:topic="topic-initiate-rm-conversation">
-      <bpmn:incoming>SequenceFlow_1rz6y6o</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0dekhi1</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_0dekhi1" sourceRef="task-initiate-rm-conversation" targetRef="task-delegate-topics" />
-    <bpmn:task id="task-document-check" name="DOCUMENT CHECK">
-      <bpmn:incoming>SequenceFlow_1rit9ks</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_09fwz96</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:task id="task-email-client-pack" name="EMAIL CLIENT MEETING PACK">
-      <bpmn:incoming>SequenceFlow_09fwz96</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0gkcjzm</bpmn:outgoing>
-    </bpmn:task>
+    <bpmn:sequenceFlow id="SequenceFlow_0dekhi1" sourceRef="task-initiate-rm-conversation" targetRef="task-gather-topics" />
     <bpmn:task id="task-save-pending-call-report" name="SAVE CALL REPORT WITH PENDING STATUS">
       <bpmn:incoming>SequenceFlow_0gkcjzm</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0w3v1yx</bpmn:outgoing>
@@ -73,11 +61,23 @@
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P2D</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
-    <bpmn:userTask id="task-delegate-topics" name="GATHER TOPICS">
+    <bpmn:serviceTask id="task-initiate-rm-conversation" name="INITIATE RM Conversation" camunda:type="external" camunda:topic="topic-initiate-rm-conversation">
+      <bpmn:incoming>SequenceFlow_1rz6y6o</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0dekhi1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="task-gather-topics" name="GATHER TOPICS" camunda:assignee="bot.user41@example.com">
       <bpmn:incoming>SequenceFlow_0dekhi1</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1rit9ks</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:association id="Association_0e0oo4r" sourceRef="task-delegate-topics" targetRef="TextAnnotation_14zpdow" />
+    <bpmn:userTask id="task-document-check" name="DOCUMENT CHECK" camunda:assignee="bot.user41@example.com">
+      <bpmn:incoming>SequenceFlow_1rit9ks</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_09fwz96</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="task-email-client-pack" name="EMAIL CLIENT MEETING PACK" camunda:assignee="bot.user41@example.com">
+      <bpmn:incoming>SequenceFlow_09fwz96</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0gkcjzm</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:association id="Association_0e0oo4r" sourceRef="task-gather-topics" targetRef="TextAnnotation_14zpdow" />
     <bpmn:textAnnotation id="TextAnnotation_14zpdow">
       <bpmn:text>Using NLP, next action can be identified via the bot and RM conversation</bpmn:text>
     </bpmn:textAnnotation>
@@ -116,12 +116,6 @@
         <di:waypoint x="359" y="318" />
         <di:waypoint x="465" y="318" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Task_007amcn_di" bpmnElement="task-document-check">
-        <dc:Bounds x="802" y="278" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_0ix97fy_di" bpmnElement="task-email-client-pack">
-        <dc:Bounds x="971" y="278" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_1b0zva5_di" bpmnElement="task-meet-client">
         <dc:Bounds x="1152" y="81" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -147,7 +141,9 @@
         <di:waypoint x="1202" y="161" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0gkcjzm_di" bpmnElement="SequenceFlow_0gkcjzm">
-        <di:waypoint x="1071" y="318" />
+        <di:waypoint x="1037" y="109" />
+        <di:waypoint x="1104" y="109" />
+        <di:waypoint x="1104" y="318" />
         <di:waypoint x="1152" y="318" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0hd57lv_di" bpmnElement="SequenceFlow_0hd57lv">
@@ -167,23 +163,25 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1rit9ks_di" bpmnElement="SequenceFlow_1rit9ks">
-        <di:waypoint x="733" y="318" />
-        <di:waypoint x="802" y="318" />
+        <di:waypoint x="730" y="109" />
+        <di:waypoint x="788" y="109" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_09fwz96_di" bpmnElement="SequenceFlow_09fwz96">
-        <di:waypoint x="902" y="318" />
-        <di:waypoint x="971" y="318" />
+        <di:waypoint x="888" y="109" />
+        <di:waypoint x="937" y="109" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0dekhi1_di" bpmnElement="SequenceFlow_0dekhi1">
         <di:waypoint x="565" y="318" />
-        <di:waypoint x="633" y="318" />
+        <di:waypoint x="598" y="318" />
+        <di:waypoint x="598" y="109" />
+        <di:waypoint x="630" y="109" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="TextAnnotation_14zpdow_di" bpmnElement="TextAnnotation_14zpdow">
         <dc:Bounds x="676" y="108" width="100" height="84" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_0e0oo4r_di" bpmnElement="Association_0e0oo4r">
-        <di:waypoint x="693" y="278" />
-        <di:waypoint x="715" y="192" />
+        <di:waypoint x="724" y="148" />
+        <di:waypoint x="726" y="150" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="TextAnnotation_09ikeuf_di" bpmnElement="TextAnnotation_09ikeuf">
         <dc:Bounds x="1362" y="53" width="100" height="112" />
@@ -192,8 +190,14 @@
         <di:waypoint x="1355" y="215" />
         <di:waypoint x="1382" y="165" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_1j39n32_di" bpmnElement="task-delegate-topics">
-        <dc:Bounds x="633" y="278" width="100" height="80" />
+      <bpmndi:BPMNShape id="UserTask_1j39n32_di" bpmnElement="task-gather-topics">
+        <dc:Bounds x="630" y="69" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_07e3ouv_di" bpmnElement="task-document-check">
+        <dc:Bounds x="788" y="69" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0xfw7qu_di" bpmnElement="task-email-client-pack">
+        <dc:Bounds x="937" y="69" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
