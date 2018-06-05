@@ -36,7 +36,7 @@ public class LegalIdTopicHandler implements TopicHandler {
     @Override
     public TopicInformation collectTopicInformation(ClientMeetingEvent clientMeetingEvent, Action action, MessageSender rmChat) throws MessagesException {
         Set<LegalIdInformation> legalIdInformationFor = legalIdRepository.getLegalIdInformationFor(clientMeetingEvent.getClientId());
-        if (legalIdInformationFor.isEmpty()) {
+        if (!areAnyLegalIdsExpiredOrNearingExpiry(legalIdInformationFor)) {
             rmChat.sendMessage(CLIENT_IDS_ARE_IN_ORDER, false);
         }
         List<LegalIdInformation> legalIdsToDiscuss = legalIdInformationFor.stream()
@@ -45,6 +45,10 @@ public class LegalIdTopicHandler implements TopicHandler {
         return new LegalIdTopicInformation(
                 legalIdsToDiscuss
         );
+    }
+
+    private boolean areAnyLegalIdsExpiredOrNearingExpiry(Set<LegalIdInformation> legalIdInformationFor) {
+        return legalIdInformationFor.stream().anyMatch(isExpired().or(isNearingExpiry()));
     }
 
     private ThrowingFunction<LegalIdInformation, Optional<LegalIdInformation>> checkLegalId(MessageSender rmChat) {
