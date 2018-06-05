@@ -1,0 +1,9 @@
+[
+  {"action": "decision",
+    "posrequirementList":[{"pos":"UH","options":["yes","yeah","sure","yep","confirm","y"],"parameter":"decisionBool", "value": "true"}]
+  },
+
+  {"action": "decision",
+    "posrequirementList":[{"pos":"UH","options":["no","nope","reject","n"],"parameter":"decisionBool", "value": "false"}]
+  }
+]

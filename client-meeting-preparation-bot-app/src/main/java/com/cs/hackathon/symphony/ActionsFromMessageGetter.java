@@ -21,6 +21,15 @@ public class ActionsFromMessageGetter {
         nlp = new NLPService(nlpConfig);
     }
 
+    public ActionsFromMessageGetter(String patternFile) {
+        NLPConfig nlpConfig = new NLPConfig();
+        nlpConfig.setPatternsFile("\"src/main/resources/" + patternFile);
+        nlpConfig.setPOSModelPath(POS_MODEL);
+        nlpConfig.setSentenceSplitterModelPath(SENTENCE_MODEL);
+        nlpConfig.setSentenceSplitterModelPath(SENTENCE_MODEL);
+        nlp = new NLPService(nlpConfig);
+    }
+
     public List<Action> getActions(String message) {
         return nlp.match(message);
     }

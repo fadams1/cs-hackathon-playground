@@ -1,5 +1,6 @@
 package com.cs.hackathon.symphony.client.followup;
 
+import com.cs.hackathon.symphony.ActionsFromMessageGetter;
 import com.cs.hackathon.symphony.SymphonyClientBuilder;
 import com.cs.hackathon.symphony.ThrowingFunction;
 import com.cs.hackathon.symphony.client.meeting.ClientMeetingEvent;
@@ -19,6 +20,7 @@ public class FollowupProcessor {
     private final SymphonyClientBuilder symphonyClientBuilder;
     private final SymphonyClient symphonyClient;
     private final Function<ClientMeetingFollowupEvent, CallReportTask> getCallReport;
+    private final ActionsFromMessageGetter actionsFromMessageGetter = new ActionsFromMessageGetter("topicPatterns.json");
 
 
     public FollowupProcessor(SymphonyClientBuilder symphonyClientBuilder) throws InitException, AuthenticationException {
@@ -35,7 +37,7 @@ public class FollowupProcessor {
 
     private ThrowingFunction<FollowupRequestContainer, CallReportTask> startCallReport() {
         return followupRequest -> {
-          if(followupRequest.getAction().getAction().equals("Yes")) {
+          if(followupRequest.getAction().getParameters().get("decisionBool").equals("true")) {
               return new CallReportTask();
           }
           else  {
@@ -54,10 +56,9 @@ public class FollowupProcessor {
             final List<Action> rmResponse = new ArrayList<>();
 
             ChatListener chatListener = message -> {
-                System.out.println("RM responded with: " + message);
-                Action response = new Action();
-                response.setAction("Yes");
-                rmResponse.add(response);
+                System.out.println("RM responded with: " + message.getMessageText());
+                actionsFromMessageGetter.getActions(message.getMessageText());
+                rmResponse.addAll(actionsFromMessageGetter.getActions(message.getMessageText()));
                 messageWaiter.countDown();
             };
 
