@@ -24,8 +24,8 @@ public class ClientMeetingController {
             .andThen(handleClientPreparationResponse());
     }
 
-    public void notifyClientMeeting(ClientMeetingEvent clientMeetingEvent) {
-        collectCallReportFromRm.apply(clientMeetingEvent);
+    public CallReportRequest notifyClientMeeting(ClientMeetingEvent clientMeetingEvent) {
+        return collectCallReportFromRm.apply(clientMeetingEvent);
     }
 
     private Function<Map<String, TopicInformation>, CallReportRequest> handleClientPreparationResponse() {
